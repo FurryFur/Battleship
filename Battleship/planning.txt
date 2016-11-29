@@ -1,0 +1,40 @@
+Player:
+	Has a board
+
+Board:
+	Each board position either contains nothing or a ship pointer
+	Each board position has state either hit, miss, not fired upon or destroyed
+	If all parts of a particular ship have been hit, then it's squares change color
+	BoardSquare:
+		Hit
+		Miss
+		NotFiredUpon
+		Destroyed
+
+Ship:
+	List of square positions
+
+
+Placing Ships:
+Player selects a ship to place
+player selects a position to place the ship
+player selects an orientation for the ship
+if placement is valid:
+	for squares in range start pos to end pos:
+		set board square to point to new ship
+
+placement is valid:
+	for squares in range start pos to end pos:
+		if board index out of range then inform the user that the placement is invalid
+		if square is already occupied then inform the user that the placement is invalid
+
+
+player chooses a square to fire upon
+if the square contains a ship
+	mark that square as a hit.
+	get ship from square
+	get all ships squares from ship
+	if all ships squares have been hit
+		mark all squares as destroyed
+else
+	mark that square as a miss
