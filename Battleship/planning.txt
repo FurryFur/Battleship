@@ -1,19 +1,41 @@
 Player:
 	Has a board
+	Has an array of ships
 
 Board:
+	Has a 2D array of BoardSquares
+	BoardSquare:
+		Ship pointer (could be nullptr for empty water)
+		State:
+			Hit
+			Miss
+			NotFiredUpon
+			Destroyed
+
 	Each board position either contains nothing or a ship pointer
 	Each board position has state either hit, miss, not fired upon or destroyed
 	If all parts of a particular ship have been hit, then it's squares change color
-	BoardSquare:
-		Hit
-		Miss
-		NotFiredUpon
-		Destroyed
 
 Ship:
-	List of square positions
+	Has an array of pointers to board squares
+	Has a ship/array length
+	Has functionality IsDestroyed
+	IsDestroyed:
+		loop over board squares, check if all are hit or destroyed
+		(square state changes to destroyed when all squares are hit, 
+		 so we only need to check the first square in this case)
 
+Pointer Ownership:
+Ships are owned by a player, the player should destroy them
+BoardSquares are owned by a board, the board should destroy them
+Boards are owned by a player, the player should destroy them 
+
+Lose Condition:
+	--If all of a players ships are destroyed they lose the game--
+	for all player's ships:
+		if ship is not destroyed:
+			They haven't lost the game yet
+			break
 
 Placing Ships:
 Player selects a ship to place
@@ -22,6 +44,7 @@ player selects an orientation for the ship
 if placement is valid:
 	for squares in range start pos to end pos:
 		set board square to point to new ship
+		Add this square position to the ship
 
 placement is valid:
 	for squares in range start pos to end pos:
