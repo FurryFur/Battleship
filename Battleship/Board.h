@@ -10,7 +10,7 @@
 class CBoard
 {
 public:
-	CBoard(size_t _szWidth, size_t _szHeight);
+	CBoard(size_t _szWidth = 10, size_t _szHeight = 10);
 	~CBoard();
 
 	bool AddShip(const BoardPosition&, const CShip::EORIENTATION, CShip& _rOutShip);
