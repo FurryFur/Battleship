@@ -3,15 +3,21 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <vector>
 #include "Board.h"
+#include "Ship.h"
 
-class Player
+class CPlayer
 {
-private:
-	Board m_board;
 public:
-	Player();
-	~Player();
+	CPlayer();
+	~CPlayer();
+
+	CBoard& GetBoard();
+
+private:
+	CBoard              m_board;
+	std::vector<CShip>  m_vShips;
 };
 
 #endif // PLAYER_H
