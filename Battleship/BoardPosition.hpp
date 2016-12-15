@@ -3,10 +3,10 @@
 #ifndef BOARD_POSITION_H
 #define BOARD_POSITION_H
 
-struct BoardPosition
+struct TBoardPosition
 {
-	unsigned int row;
-	unsigned int col;
+	unsigned int m_uiRow;
+	unsigned int m_uiCol;
 };
 
 #endif // BOARD_POSITION_H

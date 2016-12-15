@@ -10,14 +10,26 @@
 class CPlayer
 {
 public:
-	CPlayer();
+	enum EWIN_STATE
+	{
+		WON,
+		LOST,
+		NO_WIN
+	};
+
+	CPlayer(CBoard& _rBoardPlayer, CBoard& _rBoardOpponent);
 	~CPlayer();
 
-	CBoard& GetBoard();
+	// Get the current win / lost or no winner state for this player
+	EWIN_STATE GetWinState();
 
-private:
-	CBoard              m_board;
-	std::vector<CShip>  m_vShips;
+	virtual void DoTurn();
+	
+protected:
+	CBoard& m_rBoardPlayer;
+	CBoard& m_rBoardOpponent;
+
+	EWIN_STATE m_eWinState;
 };
 
 #endif // PLAYER_H

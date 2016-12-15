@@ -78,18 +78,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIPlayer.cpp" />
     <ClCompile Include="BoardSquare.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="SearchGraph.cpp" />
+    <ClCompile Include="SearchNode.cpp" />
     <ClCompile Include="Ship.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIPlayer.h" />
     <ClInclude Include="BoardPosition.hpp" />
     <ClInclude Include="BoardSquare.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SearchGraph.h" />
+    <ClInclude Include="SearchNode.h" />
     <ClInclude Include="Ship.h" />
   </ItemGroup>
   <ItemGroup>
