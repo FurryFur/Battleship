@@ -23,10 +23,16 @@ public:
 		NO_DIRECTION
 	};
 
+	static EDIRECTION GetReverseDirection(const EDIRECTION);
+
 	CSearchGraph::CSearchGraph(const CBoard&);
 	~CSearchGraph();
 
+	// Create a new candidate node from the board position, link it to supplied adjacent node
 	void AddCandidate(const TBoardPosition&, CSearchNode* const _kpAdjNode = nullptr);
+
+	// Add a hit node to the underlying adjacency graph
+	void AddHitNode(CSearchNode* const);
 
 	// Remove and return the next most likely candidate node
 	// Don't forget to delete the pointer this returns when we are done with it

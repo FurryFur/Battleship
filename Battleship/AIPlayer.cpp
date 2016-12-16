@@ -30,8 +30,7 @@ void CAIPlayer::DoTurn()
 	{
 		// Find a random unfired upon board position
 		TBoardPosition boardPosition = m_rBoardOpponent.GetRandomBoardPosition();
-		const CBoardSquare& krBoardSquare = m_rBoardOpponent.GetBoardSquare(boardPosition);
-		while (krBoardSquare.GetState() != CBoardSquare::ESTATE::NOT_FIRED_UPON)
+		while (m_rBoardOpponent.GetBoardSquare(boardPosition).GetState() != CBoardSquare::ESTATE::NOT_FIRED_UPON)
 		{
 			boardPosition = m_rBoardOpponent.GetRandomBoardPosition();
 		}
@@ -50,6 +49,9 @@ void CAIPlayer::DoTurn()
 	// If we hit something then update the AI state
 	if (eHitState == CBoardSquare::ESTATE::HIT)
 	{
+		// Add the fired on node back to the search graph as a hit node
+		m_searchGraph.AddHitNode(pFiredOnNode);
+
 		// Get cardinal positions
 		std::array<TBoardPosition, 4> arrCardBoardPositions = {{
 				{ firedOnPos.m_uiRow - 1, firedOnPos.m_uiCol },
@@ -65,7 +67,7 @@ void CAIPlayer::DoTurn()
 			TBoardPosition candidatePosition = arrCardBoardPositions[i];
 			if (m_rBoardOpponent.CanFireAt(candidatePosition))
 			{
-				// Add this position as a new candidate with the hit square as an adjacent node
+				// Add this position as a new candidate with the hit node as an adjacent node
 				auto eCandidateDirection = static_cast<CSearchGraph::EDIRECTION>(i);
 				m_searchGraph.AddCandidate(candidatePosition, pFiredOnNode);
 			}
@@ -77,5 +79,5 @@ void CAIPlayer::DoTurn()
 		delete pFiredOnNode;
 	}
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }

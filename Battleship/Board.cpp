@@ -48,14 +48,10 @@ size_t CBoard::GetHeight() const
 
 bool CBoard::IsValidPosition(const TBoardPosition& _krPosition)
 {
-	// Check if its on the board
+	// Check if position is on the board
 	if (_krPosition.m_uiRow < GetHeight() && _krPosition.m_uiCol < GetWidth())
 	{
-		// Check if its unoccupied
-		if (GetBoardSquare(_krPosition).GetShip() == nullptr)
-		{
-			return true;
-		}
+		return true;
 	}
 
 	return false;
@@ -68,8 +64,8 @@ bool CBoard::IsValidPlacement(const TBoardPosition& _krPosition, const CShip::EO
 	// Iterate through the board positions that the ship will occupy
 	for (unsigned int i = 0; i < _krOutShip.GetLength(); ++i)
 	{
-		// Fail if one of the positions is not valid or out of range
-		if (!IsValidPosition({ r, c }))
+		// Fail if one of the positions is not valid or if it's already occupied
+		if (!IsValidPosition({ r, c }) || GetBoardSquare({ r, c }).GetShip() != nullptr)
 		{
 			return false;
 		}
@@ -152,17 +148,24 @@ void CBoard::DisplayAsPlayer()
 
 	const WORD kwGRID_DEFAULT_C = BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
 
+	// Set grid letters coloring
+	SetConsoleTextAttribute(hConsole, csbi.wAttributes);
+
+	// Print grid numbers
+	std::cout << "   ";
+	for (unsigned int c = 0; c < GetWidth(); ++c)
+	{
+		std::cout << c + 1 << ' ';
+	}
+	std::cout << std::endl;
+
 	for (unsigned int r = 0; r < GetHeight(); ++r)
 	{
 		// Set grid numbers coloring
 		SetConsoleTextAttribute(hConsole, csbi.wAttributes);
 
-		// Print grid numbers
-		std::cout << GetHeight() - r << ' ';
-		if (r != 0)
-		{
-			std::cout << ' ';
-		}
+		// Print grid letters
+		std::cout << ' ' << static_cast<char>('A' + r) << ' ';
 
 		// Set grid default coloring
 		SetConsoleTextAttribute(hConsole, kwGRID_DEFAULT_C);
@@ -173,16 +176,21 @@ void CBoard::DisplayAsPlayer()
 
 			// Check for ship
 			const CShip* pkShip = krBoardSquare.GetShip();
-			char cChar = static_cast<char>(247);
+			auto cChar = static_cast<unsigned char>(247);
 			WORD wColor = kwGRID_DEFAULT_C;
 			if (pkShip != nullptr)
 			{
 				// Set coloring and chracter for ship
 				cChar = (krBoardSquare.GetState() == CBoardSquare::ESTATE::NOT_FIRED_UPON) ? '=' : 'X';
-				wColor = ((static_cast<WORD>(pkShip->GetType()) + 2) * 0x10) | BACKGROUND_INTENSITY;
+				wColor = ((static_cast<WORD>(pkShip->GetType()) + 2) * 0x10);
 				if (krBoardSquare.GetState() == CBoardSquare::ESTATE::HIT)
 				{
-					wColor = (wColor | FOREGROUND_RED | FOREGROUND_INTENSITY ) & ~FOREGROUND_GREEN & ~FOREGROUND_BLUE;
+					wColor = wColor | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+				}
+				else if (krBoardSquare.GetState() == CBoardSquare::ESTATE::DESTROYED)
+				{
+					wColor = ((wColor | FOREGROUND_RED) & ~FOREGROUND_GREEN & ~FOREGROUND_BLUE) | FOREGROUND_INTENSITY
+					       | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
 				}
 			}
 
@@ -229,15 +237,8 @@ void CBoard::DisplayAsPlayer()
 		std::cout << std::endl;
 	}
 
-	// Set grid letters coloring
+	// Reset coloring
 	SetConsoleTextAttribute(hConsole, csbi.wAttributes);
-
-	// Print grid letters
-	std::cout << "  ";
-	for (unsigned int c = 0; c < GetWidth(); ++c)
-	{
-		std::cout << ' ' << static_cast<char>('A' + c);
-	}
 
 	// Add margin to bottom
 	std::cout << std::endl << std::endl;
@@ -259,7 +260,7 @@ CBoardSquare::ESTATE CBoard::FireAt(const TBoardPosition& _krBoardPos)
 	{
 		// Update board squares to reflect new destroyed ship state
 		std::vector<CBoardSquare* const> vecShipSquares = pkShip->GetOccupiedSquares();
-		for (int i = 0; i < vecShipSquares.size(); ++i)
+		for (size_t i = 0; i < vecShipSquares.size(); ++i)
 		{
 			vecShipSquares[i]->SetState(CBoardSquare::ESTATE::DESTROYED);
 		}
@@ -270,7 +271,15 @@ CBoardSquare::ESTATE CBoard::FireAt(const TBoardPosition& _krBoardPos)
 
 bool CBoard::CanFireAt(const TBoardPosition& _krBoardPos)
 {
-	return GetBoardSquare(_krBoardPos).CanFireUpon();
+	// Check index in range
+	if (IsValidPosition(_krBoardPos))
+	{
+		return GetBoardSquare(_krBoardPos).CanFireUpon();
+	}
+	else
+	{
+		return false;
+	}
 }
 
 std::vector<CShip> CBoard::GetShips() const
