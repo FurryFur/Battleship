@@ -4,6 +4,7 @@
 #define AI_PLAYER_H
 
 #include "SearchGraph.h"
+#include "Board.h"
 
 #include "Player.h"
 
