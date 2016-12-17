@@ -17,8 +17,9 @@ public:
 
 	size_t GetWidth() const;
 	size_t GetHeight() const;
-	void DisplayAsPlayer();
-	void DisplayAsOpponent() const;
+
+	// Display the board with ships visible or invisible
+	void Display(const bool _bShipsVisible) const;
 
 	// Setup the board with random ship placement
 	void SetupBoardRandom();
@@ -30,27 +31,33 @@ public:
 	CBoardSquare::ESTATE FireAt(const TBoardPosition&);
 
 	// Check that the specified position has not already been fired upon
-	bool CanFireAt(const TBoardPosition&);
+	bool CanFireAt(const TBoardPosition&) const;
 
 	// Returns a list of the ships on the board
-	std::vector<CShip> GetShips() const;
+	const CShip& GetShip(const unsigned int) const;
+
+	// Returns the number of available ships (may or may not be placed)
+	size_t GetShipCount() const;
 
 	// Return a random valid board position
 	TBoardPosition GetRandomBoardPosition() const;
 
-	// Return a reference to the board square at the specified position
-	CBoardSquare& GetBoardSquare(const TBoardPosition&);
+	// Return a pointer to the board square (const) at the specified position
+	const CBoardSquare& GetBoardSquare(const TBoardPosition&) const;
 
 private:
 	std::vector<CShip> m_vecShips;
 	std::vector< std::vector<CBoardSquare> > m_vec2dBoardSquares;
 	
-	// Check that a board position is unoccupied and in a valid range
-	bool IsValidPosition(const TBoardPosition&);
+	// Check that a board position is inside the board
+	bool IsValidPosition(const TBoardPosition&) const;
 	// Check ship placement is valid
-	bool IsValidPlacement(const TBoardPosition&, const CShip::EORIENTATION, const CShip& _krShip);
+	bool IsValidPlacement(const TBoardPosition&, const CShip::EORIENTATION, const CShip& _krShip) const;
 	// Place a ship at the specified position and orientation on the board
 	bool PlaceShip(const TBoardPosition&, const CShip::EORIENTATION, CShip& _rOutShip);
+
+	// Return a modifiable reference to the board square at the specified position
+	CBoardSquare& _GetBoardSquare(const TBoardPosition&);
 
 	const size_t m_szWidth;
 	const size_t m_szHeight;

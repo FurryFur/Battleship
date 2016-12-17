@@ -64,7 +64,7 @@ void CShip::SetOrientation(const CShip::EORIENTATION _keOrientation)
 	m_eOrientation = _keOrientation;
 }
 
-bool CShip::IsDestroyed()
+bool CShip::IsDestroyed() const
 {
 	// Short circuit if we've already checked before and come back destroyed
 	if (m_bIsDestroyed)
@@ -72,7 +72,7 @@ bool CShip::IsDestroyed()
 
 	// Find hit count
 	unsigned int uiHits = 0;
-	for (int i = 0; i < m_vecpOccupiedSquares.size(); ++i)
+	for (size_t i = 0; i < m_vecpOccupiedSquares.size(); ++i)
 	{
 		switch (m_vecpOccupiedSquares[i]->GetState())
 		{

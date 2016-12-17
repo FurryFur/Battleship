@@ -21,7 +21,9 @@ int main()
 		player1.DoTurn();
 		player2.DoTurn();
 
-		player1Board.DisplayAsPlayer();
+		system("cls");
+		player1Board.Display(true);
+		player1Board.Display(false);
 	}
 
 	//player1Board.FireAt({0, 1});

@@ -19,7 +19,7 @@ public:
 	CBoardSquare();
 	~CBoardSquare();
 
-	CShip * const GetShip() const;
+	const CShip* GetShip() const;
 	void SetShip(CShip * const);
 
 	// Get the state of the board (hit, miss, not fired upon or destroyed)

@@ -35,7 +35,7 @@ public:
 	void SetOrientation(EORIENTATION);
 
 	// Check if all parts of the ship have been hit
-	bool IsDestroyed();
+	bool IsDestroyed() const;
 
 	// Return the vector of board square pointers occupied by the ship
 	std::vector<CBoardSquare * const> GetOccupiedSquares() const;
@@ -43,7 +43,7 @@ public:
 private:
 	std::vector<CBoardSquare * const> m_vecpOccupiedSquares;
 	size_t m_szLength;
-	bool m_bIsDestroyed;
+	mutable bool m_bIsDestroyed; // Cache variable
 	EORIENTATION m_eOrientation;
 	const ETYPE m_keTYPE;
 };

@@ -46,7 +46,7 @@ size_t CBoard::GetHeight() const
 	return m_szHeight;
 }
 
-bool CBoard::IsValidPosition(const TBoardPosition& _krPosition)
+bool CBoard::IsValidPosition(const TBoardPosition& _krPosition) const
 {
 	// Check if position is on the board
 	if (_krPosition.m_uiRow < GetHeight() && _krPosition.m_uiCol < GetWidth())
@@ -57,7 +57,7 @@ bool CBoard::IsValidPosition(const TBoardPosition& _krPosition)
 	return false;
 }
 
-bool CBoard::IsValidPlacement(const TBoardPosition& _krPosition, const CShip::EORIENTATION _keOrientation, const CShip& _krOutShip)
+bool CBoard::IsValidPlacement(const TBoardPosition& _krPosition, const CShip::EORIENTATION _keOrientation, const CShip& _krOutShip) const
 {
 	unsigned int r = _krPosition.m_uiRow;
 	unsigned int c = _krPosition.m_uiCol;
@@ -100,8 +100,8 @@ bool CBoard::PlaceShip(const TBoardPosition& _krPosition, const CShip::EORIENTAT
 	unsigned int c = _krPosition.m_uiCol;
 	for (unsigned int i = 0; i < _rOutShip.GetLength(); ++i)
 	{
-		GetBoardSquare({ r, c }).SetShip(&_rOutShip);
-		_rOutShip.AddOccupiedSquare(&GetBoardSquare({ r, c }));
+		_GetBoardSquare({ r, c }).SetShip(&_rOutShip);
+		_rOutShip.AddOccupiedSquare(&_GetBoardSquare({ r, c }));
 
 		switch (_keOrientation)
 		{
@@ -138,9 +138,9 @@ void CBoard::SetupBoardRandom()
 	}
 }
 
-void CBoard::DisplayAsPlayer()
+void CBoard::Display(const bool _bShipsVisible) const
 {
-	system("cls");
+	typedef CBoardSquare::ESTATE EHIT_STATE;
 
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -174,24 +174,36 @@ void CBoard::DisplayAsPlayer()
 		{
 			const CBoardSquare& krBoardSquare = GetBoardSquare({ r, c });
 
-			// Check for ship
-			const CShip* pkShip = krBoardSquare.GetShip();
 			auto cChar = static_cast<unsigned char>(247);
 			WORD wColor = kwGRID_DEFAULT_C;
-			if (pkShip != nullptr)
+			WORD wSpacingColor = kwGRID_DEFAULT_C;
+
+			// If ships are visible
+			if (_bShipsVisible)
 			{
-				// Set coloring and chracter for ship
-				cChar = (krBoardSquare.GetState() == CBoardSquare::ESTATE::NOT_FIRED_UPON) ? '=' : 'X';
-				wColor = ((static_cast<WORD>(pkShip->GetType()) + 2) * 0x10);
-				if (krBoardSquare.GetState() == CBoardSquare::ESTATE::HIT)
+				// Check for ship
+				const CShip* pkShip = krBoardSquare.GetShip();
+			
+				if (pkShip != nullptr)
 				{
-					wColor = wColor | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+					// Set coloring and chracter for ship square
+					cChar = (krBoardSquare.GetState() == EHIT_STATE::NOT_FIRED_UPON) ? '=' : 'X';
+					wColor = ((static_cast<WORD>(pkShip->GetType()) + 2) * 0x10);
 				}
-				else if (krBoardSquare.GetState() == CBoardSquare::ESTATE::DESTROYED)
-				{
-					wColor = ((wColor | FOREGROUND_RED) & ~FOREGROUND_GREEN & ~FOREGROUND_BLUE) | FOREGROUND_INTENSITY
-					       | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
-				}
+			}
+
+			// Set character and character coloring for hit squares
+			if (krBoardSquare.GetState() == CBoardSquare::ESTATE::HIT)
+			{
+				cChar = 'X';
+				wColor = wColor | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+			}
+			// Set character and character coloring for destroyed squares
+			if (krBoardSquare.GetState() == CBoardSquare::ESTATE::DESTROYED)
+			{
+				cChar = 'X';
+				wColor = ((wColor | FOREGROUND_RED) & ~FOREGROUND_GREEN & ~FOREGROUND_BLUE) | FOREGROUND_INTENSITY
+					| BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
 			}
 
 			// Add spacing between grid squares
@@ -199,35 +211,47 @@ void CBoard::DisplayAsPlayer()
 			{
 				// Set coloring for spacing
 				const CBoardSquare& krBoardSquareLeft = GetBoardSquare({ r, c - 1 });
-				if (krBoardSquareLeft.GetShip() != pkShip)
+				EHIT_STATE eLeftState = krBoardSquareLeft.GetState();
+				EHIT_STATE eRightState = krBoardSquare.GetState();
+				// Black background between misses, miss and destroyed, and miss and hit
+				bool bBothMisses  = (eLeftState == EHIT_STATE::MISS && eRightState == EHIT_STATE::MISS);
+				bool bMissHit     = (eLeftState == EHIT_STATE::MISS && eRightState == EHIT_STATE::HIT) 
+				                 || (eLeftState == EHIT_STATE::HIT && eRightState == EHIT_STATE::MISS);
+				bool bMissDestroy = (eLeftState == EHIT_STATE::MISS && eRightState == EHIT_STATE::DESTROYED)
+				                 || (eLeftState == EHIT_STATE::DESTROYED && eRightState == EHIT_STATE::MISS);
+				if (bBothMisses || bMissHit || bMissDestroy)
 				{
-					SetConsoleTextAttribute(hConsole, kwGRID_DEFAULT_C);
+					wSpacingColor &= ~BACKGROUND_BLUE & ~BACKGROUND_RED & ~BACKGROUND_GREEN;
 				}
+				// White background between destroyed
+				else if (eLeftState == EHIT_STATE::DESTROYED && eRightState == EHIT_STATE::DESTROYED)
+				{
+					wSpacingColor |= BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
+				}
+				// Ship color background between ships if ships are visible
+				else if (_bShipsVisible && krBoardSquare.GetShip() != nullptr && krBoardSquareLeft.GetShip() == krBoardSquare.GetShip())
+				{
+					wSpacingColor = wColor;
+				}
+				// Blue unfired upon background by default
 				else
 				{
-					if (krBoardSquare.GetState() == CBoardSquare::ESTATE::MISS && krBoardSquareLeft.GetState() == CBoardSquare::ESTATE::MISS)
-					{
-						SetConsoleTextAttribute(hConsole, wColor & ~BACKGROUND_BLUE & ~BACKGROUND_RED & ~BACKGROUND_GREEN);
-					}
-					else
-					{
-						SetConsoleTextAttribute(hConsole, wColor);
-					}
+					wSpacingColor = kwGRID_DEFAULT_C;
 				}
+
+				SetConsoleTextAttribute(hConsole, wSpacingColor);
 
 				// Print spacing
 				std::cout << ' ';
 			}
 
 			// Set coloring for grid square
-			if (krBoardSquare.GetState() == CBoardSquare::ESTATE::MISS)
+			if (krBoardSquare.GetState() == EHIT_STATE::MISS)
 			{
-				SetConsoleTextAttribute(hConsole, wColor & ~BACKGROUND_BLUE & ~BACKGROUND_RED & ~BACKGROUND_GREEN);
+				// Black background on misses
+				wColor &= ~BACKGROUND_BLUE & ~BACKGROUND_RED & ~BACKGROUND_GREEN;
 			}
-			else
-			{
-				SetConsoleTextAttribute(hConsole, wColor);
-			}
+			SetConsoleTextAttribute(hConsole, wColor);
 
 			// Print grid square
 			std::cout << cChar;
@@ -244,18 +268,13 @@ void CBoard::DisplayAsPlayer()
 	std::cout << std::endl << std::endl;
 }
 
-void CBoard::DisplayAsOpponent() const
-{
-
-}
-
 CBoardSquare::ESTATE CBoard::FireAt(const TBoardPosition& _krBoardPos)
 {
-	CBoardSquare& rBoardSquare = GetBoardSquare(_krBoardPos);
+	CBoardSquare& rBoardSquare = _GetBoardSquare(_krBoardPos);
 	rBoardSquare.FireUpon();
 
 	// Check if we have destroyed a ship and update board state appropriately
-	CShip* pkShip = rBoardSquare.GetShip();
+	const CShip* pkShip = rBoardSquare.GetShip();
 	if (pkShip != nullptr && pkShip->IsDestroyed())
 	{
 		// Update board squares to reflect new destroyed ship state
@@ -269,7 +288,7 @@ CBoardSquare::ESTATE CBoard::FireAt(const TBoardPosition& _krBoardPos)
 	return rBoardSquare.GetState();
 }
 
-bool CBoard::CanFireAt(const TBoardPosition& _krBoardPos)
+bool CBoard::CanFireAt(const TBoardPosition& _krBoardPos) const
 {
 	// Check index in range
 	if (IsValidPosition(_krBoardPos))
@@ -282,9 +301,14 @@ bool CBoard::CanFireAt(const TBoardPosition& _krBoardPos)
 	}
 }
 
-std::vector<CShip> CBoard::GetShips() const
+const CShip& CBoard::GetShip(const unsigned int _kuiIdx) const
 {
-	return m_vecShips;
+	return m_vecShips[_kuiIdx];
+}
+
+size_t CBoard::GetShipCount() const
+{
+	return m_vecShips.size();
 }
 
 TBoardPosition CBoard::GetRandomBoardPosition() const
@@ -297,7 +321,12 @@ CShip::EORIENTATION CBoard::GetRandomOrientation() const
 	return static_cast<CShip::EORIENTATION>(m_kRAND_ORIENTATION(m_skRNG));
 }
 
-CBoardSquare& CBoard::GetBoardSquare(const TBoardPosition& _krBoardPosition)
+const CBoardSquare& CBoard::GetBoardSquare(const TBoardPosition& _krBoardPosition) const
+{
+	return m_vec2dBoardSquares[_krBoardPosition.m_uiRow][_krBoardPosition.m_uiCol];
+}
+
+CBoardSquare& CBoard::_GetBoardSquare(const TBoardPosition& _krBoardPosition)
 {
 	return m_vec2dBoardSquares[_krBoardPosition.m_uiRow][_krBoardPosition.m_uiCol];
 }

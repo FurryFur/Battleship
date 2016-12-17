@@ -20,7 +20,7 @@ void CSearchNode::SetAdjNode(const CSearchGraph::EDIRECTION _keDirection, CSearc
 	m_arrpAdj[static_cast<unsigned int>(_keDirection)] = _kpSearchNode;
 }
 
-CSearchNode* CSearchNode::GetAdjNode(const CSearchGraph::EDIRECTION _keDirection) const
+CSearchNode* CSearchNode::GetAdjNode(const CSearchGraph::EDIRECTION _keDirection)
 {
 	// Guard against out of bounds array indexing
 	if (_keDirection == CSearchGraph::EDIRECTION::NO_DIRECTION)

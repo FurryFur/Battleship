@@ -18,7 +18,7 @@ public:
 	void SetAdjNode(const CSearchGraph::EDIRECTION, CSearchNode* const);
 
 	// Get a pointer the adjacent node in the specified direction
-	CSearchNode* GetAdjNode(const CSearchGraph::EDIRECTION) const;
+	CSearchNode* GetAdjNode(const CSearchGraph::EDIRECTION);
 
 	// Returns the direction to this node from the specified ADJACENT board position
 	// If the board position is not adjacent then NO_DIRECTION is returned

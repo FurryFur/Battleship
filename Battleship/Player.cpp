@@ -15,7 +15,7 @@ CPlayer::~CPlayer()
 {
 }
 
-CPlayer::EWIN_STATE CPlayer::GetWinState()
+CPlayer::EWIN_STATE CPlayer::GetWinState() const
 {
 	// Short circuit if we have already found a winner on an ealier run
 	if (m_eWinState != CPlayer::EWIN_STATE::NO_WIN)
@@ -23,21 +23,19 @@ CPlayer::EWIN_STATE CPlayer::GetWinState()
 		return m_eWinState;
 	}
 
-	std::vector<CShip> vecPlayerShips = m_rBoardPlayer.GetShips();
-	std::vector<CShip> vecOpponentShips = m_rBoardPlayer.GetShips();
-
 	// Check to see if the player has lost
 	bool bPlayerLost = true;
-	for (unsigned int i = 0; i < vecPlayerShips.size(); ++i)
+	for (unsigned int i = 0; i < m_rBoardPlayer.GetShipCount(); ++i)
 	{
-		if (!vecPlayerShips[i].IsDestroyed())
+		CShip playerShip = m_rBoardPlayer.GetShip(i);
+		if (!playerShip.IsDestroyed())
 		{
 			bPlayerLost = false;
 			break;
 		}
 	}
 
-	// If player has lost then the win state should be set to LOST
+	// If player has lost then the win state should be cached to LOST
 	if (bPlayerLost)
 	{
 		m_eWinState = CPlayer::EWIN_STATE::LOST;
@@ -46,16 +44,17 @@ CPlayer::EWIN_STATE CPlayer::GetWinState()
 
 	// Check to see if the opponent has lost (player has won)
 	bool bOpponentLost = true;
-	for (unsigned int i = 0; i < vecOpponentShips.size(); ++i)
+	for (unsigned int i = 0; i < m_rBoardOpponent.GetShipCount(); ++i)
 	{
-		if (!vecOpponentShips[i].IsDestroyed())
+		CShip opponentShip = m_rBoardOpponent.GetShip(i);
+		if (!opponentShip.IsDestroyed())
 		{
 			bOpponentLost = false;
 			break;
 		}
 	}
 
-	// If the opponent has lost then the win state should be set to WIN for this player
+	// If the opponent has lost then the win state should be cached to WIN for this player
 	if (bOpponentLost)
 	{
 		m_eWinState = CPlayer::EWIN_STATE::WON;

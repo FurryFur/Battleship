@@ -13,7 +13,7 @@ CBoardSquare::~CBoardSquare()
 {
 }
 
-CShip * const CBoardSquare::GetShip() const
+const CShip* CBoardSquare::GetShip() const
 {
 	return m_pShip;
 }
@@ -39,8 +39,7 @@ void CBoardSquare::FireUpon()
 	if (CanFireUpon())
 	{
 		// Update the board square with new state
-		CShip* pkShip = GetShip();
-		if (pkShip != nullptr)
+		if (m_pShip != nullptr)
 		{
 			SetState(CBoardSquare::ESTATE::HIT);
 		}
