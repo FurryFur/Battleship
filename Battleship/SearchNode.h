@@ -15,10 +15,10 @@ public:
 	~CSearchNode();
 
 	// Set the the adjacent node in the given direction to be the specified node
-	void SetAdjNode(const CSearchGraph::EDIRECTION, CSearchNode* const);
+	void SetAdjHitNode(const CSearchGraph::EDIRECTION, CSearchNode* const);
 
 	// Get a pointer the adjacent node in the specified direction
-	CSearchNode* GetAdjNode(const CSearchGraph::EDIRECTION);
+	CSearchNode* GetAdjHitNode(const CSearchGraph::EDIRECTION);
 
 	// Returns the direction to this node from the specified ADJACENT board position
 	// If the board position is not adjacent then NO_DIRECTION is returned
@@ -28,7 +28,7 @@ public:
 
 private:
 	// Array of adjacent nodes, indexed by direction (NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3)
-	std::array<CSearchNode*, 4> m_arrpAdj;
+	std::array<CSearchNode*, 4> m_arrpAdjHitNodes;
 
 	TBoardPosition m_boardPosition;
 };

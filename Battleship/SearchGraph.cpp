@@ -57,7 +57,7 @@ void CSearchGraph::AddCandidate(const TBoardPosition& _krCandidatePos, CSearchNo
 	{
 		// Create a link to this adjacent (hit) node from the candidate node
 		CSearchGraph::EDIRECTION linkDirection = _kpAdjNode->GetDirectionFrom(_krCandidatePos);
-		pCandidateNode->SetAdjNode(linkDirection, _kpAdjNode);
+		pCandidateNode->SetAdjHitNode(linkDirection, _kpAdjNode);
 	}
 
 	assert(m_szCandidateCount == m_listCandidateNodes.size());
@@ -69,12 +69,12 @@ void CSearchGraph::AddHitNode(CSearchNode* const _kpHitNode)
 	for (unsigned int i = CSearchGraph::EDIRECTION::NORTH; i != CSearchGraph::EDIRECTION::NO_DIRECTION; ++i)
 	{
 		auto eLinkDirection = static_cast<CSearchGraph::EDIRECTION>(i);
-		CSearchNode* pAdjNode = _kpHitNode->GetAdjNode(eLinkDirection);
+		CSearchNode* pAdjNode = _kpHitNode->GetAdjHitNode(eLinkDirection);
 
 		// Create the reverse link neccessary to connect this node back to the search graph
 		if (pAdjNode != nullptr)
 		{
-			pAdjNode->SetAdjNode(GetReverseDirection(eLinkDirection), _kpHitNode);
+			pAdjNode->SetAdjHitNode(GetReverseDirection(eLinkDirection), _kpHitNode);
 		}
 	}
 }
@@ -98,10 +98,10 @@ CSearchNode* CSearchGraph::PopNextCandidate()
 			for (unsigned int i = CSearchGraph::EDIRECTION::NORTH; i != CSearchGraph::EDIRECTION::NO_DIRECTION; ++i)
 			{
 				auto eLinkDirection = static_cast<CSearchGraph::EDIRECTION>(i);
-				CSearchNode* pAdjNode = pCandidateNode->GetAdjNode(eLinkDirection);
+				CSearchNode* pAdjNode = pCandidateNode->GetAdjHitNode(eLinkDirection);
 
 				// If there two adjacent hit nodes in the graph
-				if (pAdjNode != nullptr && pAdjNode->GetAdjNode(eLinkDirection) != nullptr)
+				if (pAdjNode != nullptr && pAdjNode->GetAdjHitNode(eLinkDirection) != nullptr)
 				{
 					assert(m_szCandidateCount == m_listCandidateNodes.size());
 

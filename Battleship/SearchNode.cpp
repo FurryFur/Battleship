@@ -6,7 +6,7 @@
 
 CSearchNode::CSearchNode(const TBoardPosition& _boardPosition) :
 m_boardPosition(_boardPosition),
-m_arrpAdj({ { nullptr, nullptr, nullptr, nullptr } })
+m_arrpAdjHitNodes({ { nullptr, nullptr, nullptr, nullptr } })
 {
 }
 
@@ -15,18 +15,18 @@ CSearchNode::~CSearchNode()
 {
 }
 
-void CSearchNode::SetAdjNode(const CSearchGraph::EDIRECTION _keDirection, CSearchNode* const _kpSearchNode)
+void CSearchNode::SetAdjHitNode(const CSearchGraph::EDIRECTION _keDirection, CSearchNode* const _kpSearchNode)
 {
-	m_arrpAdj[static_cast<unsigned int>(_keDirection)] = _kpSearchNode;
+	m_arrpAdjHitNodes[static_cast<unsigned int>(_keDirection)] = _kpSearchNode;
 }
 
-CSearchNode* CSearchNode::GetAdjNode(const CSearchGraph::EDIRECTION _keDirection)
+CSearchNode* CSearchNode::GetAdjHitNode(const CSearchGraph::EDIRECTION _keDirection)
 {
 	// Guard against out of bounds array indexing
 	if (_keDirection == CSearchGraph::EDIRECTION::NO_DIRECTION)
 		return nullptr;
 
-	return m_arrpAdj[static_cast<unsigned int>(_keDirection)];
+	return m_arrpAdjHitNodes[static_cast<unsigned int>(_keDirection)];
 }
 
 CSearchGraph::EDIRECTION CSearchNode::GetDirectionFrom(const TBoardPosition& _krFromPos) const
