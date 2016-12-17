@@ -26,11 +26,21 @@ public:
 
 	TBoardPosition GetBoardPosition() const;
 
+	bool IsCandidateNode() const;
+	void SetCandidateNode();
+	bool IsHitNode() const;
+	void SetHitNode();
+
+	// Returns the number of links from this node to other nodes in the graph
+	size_t GetLinkCount() const;
+
 private:
 	// Array of adjacent nodes, indexed by direction (NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3)
 	std::array<CSearchNode*, 4> m_arrpAdjHitNodes;
 
 	TBoardPosition m_boardPosition;
+	bool m_bIsCandidate;
+	size_t m_szLinkCount;
 };
 
 #endif // SEARCH_NODE_H

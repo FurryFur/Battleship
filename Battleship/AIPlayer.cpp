@@ -1,6 +1,7 @@
 #include <chrono>
 #include <thread>
 #include <array>
+#include <assert.h>
 
 #include "BoardPosition.hpp"
 #include "BoardSquare.h"
@@ -43,8 +44,12 @@ void CAIPlayer::DoTurn()
 	CSearchNode* pFiredOnNode = m_searchGraph.PopNextCandidate();
 	TBoardPosition firedOnPos = pFiredOnNode->GetBoardPosition();
 
+	assert(m_rBoardOpponent.GetBoardSquare(firedOnPos).GetState() == CBoardSquare::ESTATE::NOT_FIRED_UPON);
+
 	// Fire at will
 	CBoardSquare::ESTATE eHitState = m_rBoardOpponent.FireAt(firedOnPos);
+
+	assert(m_rBoardOpponent.GetBoardSquare(firedOnPos).GetState() != CBoardSquare::ESTATE::NOT_FIRED_UPON);
 		
 	// If we hit something then update the AI state
 	if (eHitState == CBoardSquare::ESTATE::HIT)
@@ -53,25 +58,39 @@ void CAIPlayer::DoTurn()
 		m_searchGraph.AddHitNode(pFiredOnNode);
 
 		// Get cardinal positions
-		std::array<TBoardPosition, 4> arrCardBoardPositions = {{
-				{ firedOnPos.m_uiRow - 1, firedOnPos.m_uiCol },
-				{ firedOnPos.m_uiRow, firedOnPos.m_uiCol + 1 },
-				{ firedOnPos.m_uiRow + 1, firedOnPos.m_uiCol },
-				{ firedOnPos.m_uiRow, firedOnPos.m_uiCol - 1 }
-		}};
+		std::array<TBoardPosition, 4> arrCardPos;
+		CBoard::FillWithCardinalPositions(firedOnPos, arrCardPos);
 
 		// Loop over each cardinal position
-		for (unsigned int i = 0; i < arrCardBoardPositions.size(); ++i)
+		for (unsigned int i = 0; i < arrCardPos.size(); ++i)
 		{
 			// If we can fire at the position
-			TBoardPosition candidatePosition = arrCardBoardPositions[i];
-			if (m_rBoardOpponent.CanFireAt(candidatePosition))
+			if (m_rBoardOpponent.CanFireAt(arrCardPos[i]))
 			{
 				// Add this position as a new candidate with the hit node as an adjacent node
 				auto eCandidateDirection = static_cast<CSearchGraph::EDIRECTION>(i);
-				m_searchGraph.AddCandidate(candidatePosition, pFiredOnNode);
+				m_searchGraph.AddCandidate(arrCardPos[i], pFiredOnNode);
 			}
 		}
+	}
+	// If we destroyed something then update the AI state
+	else if (eHitState == CBoardSquare::ESTATE::DESTROYED)
+	{
+		// Add the fired on node back to the search graph as a hit node
+		m_searchGraph.AddHitNode(pFiredOnNode);
+
+		// Prune the graph starting at the fired on node.
+		// The prune condition for nodes is that they must corrospond to a destroyed
+		// board square.
+		m_searchGraph.PruneGraph(
+			pFiredOnNode, 
+			[&] (CSearchNode const * const _kpkSearchNode) 
+			{ 
+				TBoardPosition nodeBoardPosition = _kpkSearchNode->GetBoardPosition();
+				CBoardSquare nodeBoardSquare = m_rBoardOpponent.GetBoardSquare(nodeBoardPosition);
+				return nodeBoardSquare.GetState() == CBoardSquare::ESTATE::DESTROYED;
+			}
+		);
 	}
 	// If we didn't hit anything then we can discard this candidate
 	else

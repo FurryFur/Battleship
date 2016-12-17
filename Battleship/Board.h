@@ -5,6 +5,8 @@
 
 #include <random>
 #include <vector>
+#include <array>
+
 #include "Ship.h"
 #include "BoardPosition.hpp"
 
@@ -17,6 +19,10 @@ public:
 
 	size_t GetWidth() const;
 	size_t GetHeight() const;
+
+	// Fills the supplied array with board positions, NORTH, SOUTH, EAST, and 
+	// WEST, of the specified position
+	static std::array<TBoardPosition, 4>& FillWithCardinalPositions(const TBoardPosition&, std::array<TBoardPosition, 4>&);
 
 	// Display the board with ships visible or invisible
 	void Display(const bool _bShipsVisible) const;

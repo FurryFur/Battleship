@@ -6,7 +6,9 @@
 
 CSearchNode::CSearchNode(const TBoardPosition& _boardPosition) :
 m_boardPosition(_boardPosition),
-m_arrpAdjHitNodes({ { nullptr, nullptr, nullptr, nullptr } })
+m_arrpAdjHitNodes({ { nullptr, nullptr, nullptr, nullptr } }),
+m_bIsCandidate(true),
+m_szLinkCount(0)
 {
 }
 
@@ -17,6 +19,17 @@ CSearchNode::~CSearchNode()
 
 void CSearchNode::SetAdjHitNode(const CSearchGraph::EDIRECTION _keDirection, CSearchNode* const _kpSearchNode)
 {
+	// Check for link addition
+	if (_kpSearchNode != nullptr && GetAdjHitNode(_keDirection) == nullptr)
+	{
+		++m_szLinkCount;
+	}
+	// Check for link removal
+	if (_kpSearchNode == nullptr && GetAdjHitNode(_keDirection) != nullptr)
+	{
+		--m_szLinkCount;
+	}
+
 	m_arrpAdjHitNodes[static_cast<unsigned int>(_keDirection)] = _kpSearchNode;
 }
 
@@ -55,4 +68,29 @@ CSearchGraph::EDIRECTION CSearchNode::GetDirectionFrom(const TBoardPosition& _kr
 TBoardPosition CSearchNode::GetBoardPosition() const
 {
 	return m_boardPosition;
+}
+
+bool CSearchNode::IsCandidateNode() const
+{
+	return m_bIsCandidate;
+}
+
+void CSearchNode::SetCandidateNode()
+{
+	m_bIsCandidate = true;
+}
+
+bool CSearchNode::IsHitNode() const
+{
+	return !m_bIsCandidate;
+}
+
+void CSearchNode::SetHitNode()
+{
+	m_bIsCandidate = false;
+}
+
+size_t CSearchNode::GetLinkCount() const
+{
+	return m_szLinkCount;
 }

@@ -2,6 +2,7 @@
 #include <random>
 #include <Windows.h>
 #include <vector>
+#include <array>
 
 #include "BoardSquare.h"
 #include "BoardPosition.hpp"
@@ -44,6 +45,15 @@ size_t CBoard::GetWidth() const
 size_t CBoard::GetHeight() const
 {
 	return m_szHeight;
+}
+
+std::array<TBoardPosition, 4>& CBoard::FillWithCardinalPositions(const TBoardPosition& _kBoardPos, std::array<TBoardPosition, 4>& _rarrCardPos)
+{
+	_rarrCardPos[0].m_uiRow = _kBoardPos.m_uiRow - 1; _rarrCardPos[0].m_uiCol = _kBoardPos.m_uiCol;
+	_rarrCardPos[1].m_uiRow = _kBoardPos.m_uiRow;     _rarrCardPos[1].m_uiCol = _kBoardPos.m_uiCol + 1;
+	_rarrCardPos[2].m_uiRow = _kBoardPos.m_uiRow + 1; _rarrCardPos[2].m_uiCol = _kBoardPos.m_uiCol;
+	_rarrCardPos[3].m_uiRow = _kBoardPos.m_uiRow;     _rarrCardPos[3].m_uiCol = _kBoardPos.m_uiCol - 1;
+	return _rarrCardPos;
 }
 
 bool CBoard::IsValidPosition(const TBoardPosition& _krPosition) const
@@ -249,7 +259,9 @@ void CBoard::Display(const bool _bShipsVisible) const
 			if (krBoardSquare.GetState() == EHIT_STATE::MISS)
 			{
 				// Black background on misses
-				wColor &= ~BACKGROUND_BLUE & ~BACKGROUND_RED & ~BACKGROUND_GREEN;
+				cChar = 'O';
+				wColor = ~BACKGROUND_BLUE & ~BACKGROUND_RED & ~BACKGROUND_GREEN;
+				wColor = FOREGROUND_RED | FOREGROUND_BLUE;
 			}
 			SetConsoleTextAttribute(hConsole, wColor);
 

@@ -1,5 +1,6 @@
 #include <list>
 #include <assert.h>
+#include <functional>
 
 #include "Board.h"
 #include "SearchNode.h"
@@ -8,15 +9,22 @@
 #include "SearchGraph.h"
 
 CSearchGraph::CSearchGraph(const CBoard& _krBoard) :
-m_vecCandLUTable(_krBoard.GetHeight(), std::vector<CSearchNode*>(_krBoard.GetWidth(), nullptr)),
-m_szCandidateCount(0)
+m_vecNodeLUTable(_krBoard.GetHeight(), std::vector<CSearchNode*>(_krBoard.GetWidth(), nullptr)),
+m_szNodeCount(0),
+m_szLUTWidth(_krBoard.GetWidth()),
+m_szLUTHeight(_krBoard.GetHeight())
 {
 }
 
 
 CSearchGraph::~CSearchGraph()
 {
-	
+	// For each candidate node
+	for (auto it = m_listCandidateNodes.begin(); it != m_listCandidateNodes.end(); ++it)
+	{
+		// PruneGraph with candidate node as start node
+		PruneGraph(*it, nullptr);
+	}
 }
 
 CSearchGraph::EDIRECTION CSearchGraph::GetReverseDirection(const CSearchGraph::EDIRECTION _keDirection)
@@ -24,16 +32,27 @@ CSearchGraph::EDIRECTION CSearchGraph::GetReverseDirection(const CSearchGraph::E
 	return static_cast<CSearchGraph::EDIRECTION>((_keDirection + 2) % 4);
 }
 
-CSearchNode*& CSearchGraph::LookupCandidate(const TBoardPosition& _krBoardPos)
+bool CSearchGraph::IsValidLUPosition(const TBoardPosition& _krPosition) const
 {
-	return m_vecCandLUTable[_krBoardPos.m_uiRow][_krBoardPos.m_uiCol];
+	// Check if position is on the board
+	if (_krPosition.m_uiRow < m_szLUTHeight && _krPosition.m_uiCol < m_szLUTWidth)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+CSearchNode*& CSearchGraph::LookupNode(const TBoardPosition& _krBoardPos)
+{
+	return m_vecNodeLUTable[_krBoardPos.m_uiRow][_krBoardPos.m_uiCol];
 }
 
 void CSearchGraph::AddCandidate(const TBoardPosition& _krCandidatePos, CSearchNode * const _kpAdjNode)
 {
 	// Use lookup table to check if candidate node already exists
 	CSearchNode* pCandidateNode;
-	CSearchNode*& rpExistingCandidate = LookupCandidate(_krCandidatePos);
+	CSearchNode*& rpExistingCandidate = LookupNode(_krCandidatePos);
 	if (rpExistingCandidate)
 	{
 		pCandidateNode = rpExistingCandidate;
@@ -46,10 +65,10 @@ void CSearchGraph::AddCandidate(const TBoardPosition& _krCandidatePos, CSearchNo
 
 		// Add canditate node to list and lookup table
 		m_listCandidateNodes.push_front(pCandidateNode);
-		LookupCandidate(_krCandidatePos) = pCandidateNode;
+		LookupNode(_krCandidatePos) = pCandidateNode;
 
-		// Update the candidate node count
-		++m_szCandidateCount;
+		// Update the total node count
+		++m_szNodeCount;
 	}
 
 	// If an adjacent (hit) node is given
@@ -60,11 +79,21 @@ void CSearchGraph::AddCandidate(const TBoardPosition& _krCandidatePos, CSearchNo
 		pCandidateNode->SetAdjHitNode(linkDirection, _kpAdjNode);
 	}
 
-	assert(m_szCandidateCount == m_listCandidateNodes.size());
+	// Set this node as a candidate node
+	pCandidateNode->SetCandidateNode();
 }
 
 void CSearchGraph::AddHitNode(CSearchNode* const _kpHitNode)
 {
+	// Set this node as a hit node
+	_kpHitNode->SetHitNode();
+
+	// Add the node back to the lookup table
+	LookupNode(_kpHitNode->GetBoardPosition()) = _kpHitNode;
+
+	// Increment the total node count
+	++m_szNodeCount;
+
 	// Loop over all the nodes adjacent to the specified node
 	for (unsigned int i = CSearchGraph::EDIRECTION::NORTH; i != CSearchGraph::EDIRECTION::NO_DIRECTION; ++i)
 	{
@@ -81,70 +110,149 @@ void CSearchGraph::AddHitNode(CSearchNode* const _kpHitNode)
 
 size_t CSearchGraph::GetCandidateCount() const
 {
-	return m_szCandidateCount;
+	return m_listCandidateNodes.size();
 }
 
 CSearchNode* CSearchGraph::PopNextCandidate()
 {
-	// Loop over all the candidate nodes
-	auto it = m_listCandidateNodes.begin();
-	while (it != m_listCandidateNodes.end())
+	// Check we have candidate nodes
+	if (GetCandidateCount() > 0)
 	{
-		CSearchNode* pCandidateNode = *it;
-
-		if (pCandidateNode != nullptr)
+		// Loop over all the candidate nodes
+		for (auto it = m_listCandidateNodes.begin(); it != m_listCandidateNodes.end(); ++it)
 		{
-			// Loop over all the adjacent hit nodes to the candidate node
-			for (unsigned int i = CSearchGraph::EDIRECTION::NORTH; i != CSearchGraph::EDIRECTION::NO_DIRECTION; ++i)
+			CSearchNode* pCandidateNode = *it;
+
+			if (pCandidateNode != nullptr)
 			{
-				auto eLinkDirection = static_cast<CSearchGraph::EDIRECTION>(i);
-				CSearchNode* pAdjNode = pCandidateNode->GetAdjHitNode(eLinkDirection);
-
-				// If there two adjacent hit nodes in the graph
-				if (pAdjNode != nullptr && pAdjNode->GetAdjHitNode(eLinkDirection) != nullptr)
+				// Loop over all the adjacent hit nodes to the candidate node
+				for (unsigned int i = CSearchGraph::EDIRECTION::NORTH; i != CSearchGraph::EDIRECTION::NO_DIRECTION; ++i)
 				{
-					assert(m_szCandidateCount == m_listCandidateNodes.size());
+					auto eLinkDirection = static_cast<CSearchGraph::EDIRECTION>(i);
+					CSearchNode* pAdjNode = pCandidateNode->GetAdjHitNode(eLinkDirection);
 
-					return PopNode(it);
+					// If there two adjacent hit nodes in the graph
+					if (pAdjNode != nullptr && pAdjNode->GetAdjHitNode(eLinkDirection) != nullptr)
+					{
+						return PopCandidateNode(it);
+					}
 				}
 			}
 		}
-
-		++it;
-	}
-
-	if (m_szCandidateCount > 0)
-	{
+	
 		// If we can't find a prefered candidate node then just return the first
-		it = m_listCandidateNodes.begin();
+		auto it = m_listCandidateNodes.begin();
 		CSearchNode* pCandidateNode = *it;
-		
-		assert(m_szCandidateCount == m_listCandidateNodes.size());
-		
-		return PopNode(it);
+		return PopCandidateNode(it);
 	}
+	// If we don't have candidate nodes then just return nullptr
 	else
 	{
-		assert(m_szCandidateCount == m_listCandidateNodes.size());
-
-		// Return nullptr if there are no candidate nodes
 		return nullptr;
 	}
 }
 
-CSearchNode* CSearchGraph::PopNode(const std::list<CSearchNode*>::iterator& _it)
+CSearchNode* CSearchGraph::PopCandidateNode(const std::list<CSearchNode*>::iterator& _it)
 {
 	CSearchNode* pCandidateNode = *_it;
 
 	// Remove and return this candidate node from both LU table and list
 	m_listCandidateNodes.erase(_it);
 	TBoardPosition boardPosition = pCandidateNode->GetBoardPosition();
-	LookupCandidate(boardPosition) = nullptr;
+	LookupNode(boardPosition) = nullptr;
 
-	// Decrement the candidate node count
-	--m_szCandidateCount;
-
-	assert(m_szCandidateCount == m_listCandidateNodes.size());
+	// Decrement the total node count
+	--m_szNodeCount;
 
 	return pCandidateNode;
+}
+
+void CSearchGraph::PruneGraph(CSearchNode* const _kpRootNode, const std::function <bool (CSearchNode const * const)>& _fnCondition)
+{
+	if (_kpRootNode == nullptr)
+		return;
+
+	// Only prune if the root node passes the condition
+	if (!_fnCondition || _fnCondition(_kpRootNode))
+	{
+		// Remove the root node from the graph
+		PopNode(_kpRootNode);
+
+		// Loop over all the different link directions
+		for (unsigned int i = CSearchGraph::EDIRECTION::NORTH; i != CSearchGraph::EDIRECTION::NO_DIRECTION; ++i)
+		{
+			auto eLinkDirection = static_cast<CSearchGraph::EDIRECTION>(i);
+			CSearchNode* pAdjNode = _kpRootNode->GetAdjHitNode(eLinkDirection);
+
+			// Prune the graph in each direction
+			PruneGraph(pAdjNode, _fnCondition);
+		}
+
+		// Delete the root node
+		delete _kpRootNode;
+	}
+}
+
+void CSearchGraph::PopNode(CSearchNode* const _kpPoppedNode)
+{
+	if (_kpPoppedNode != nullptr)
+	{
+		// If node is a candidate node, then simply pop it off the graph
+		if (_kpPoppedNode->IsCandidateNode())
+		{
+			// Find candidate node in list
+			for (auto it = m_listCandidateNodes.begin(); it != m_listCandidateNodes.end(); ++it)
+			{
+				if (_kpPoppedNode == *it)
+				{
+					// Pop candidate node
+					PopCandidateNode(it);
+					return;
+				}
+			}
+		}
+
+		// Shouldn't get here if the popped node is a candidate node
+		assert(_kpPoppedNode->IsHitNode() && !_kpPoppedNode->IsCandidateNode());
+
+		// For a hit node, first, manually remove it from the lookup table, and decrement the node count
+		LookupNode(_kpPoppedNode->GetBoardPosition()) = nullptr;
+		--m_szNodeCount;
+
+		// Get cardinal positions
+		std::array<TBoardPosition, 4> arrCardPos;
+		CBoard::FillWithCardinalPositions(_kpPoppedNode->GetBoardPosition(), arrCardPos);
+
+		//** Remove References to popped node **//
+		// For adjacent cardinal positions
+		for (unsigned int i = 0; i < arrCardPos.size(); ++i)
+		{
+			// Check cardinal position is valid
+			if (!IsValidLUPosition(arrCardPos[i]))
+				continue;
+
+			// Find adjacent nodes using lookup table
+			CSearchNode* pAdjNode = LookupNode(arrCardPos[i]);
+
+			// If we find an adjacent node
+			if (pAdjNode != nullptr)
+			{
+				// Get the link direction from the adjacent node to the popped node
+				auto eDirectionToAdj = static_cast<CSearchGraph::EDIRECTION>(i);
+				CSearchGraph::EDIRECTION eDirectionToPopped = CSearchGraph::GetReverseDirection(eDirectionToAdj);
+
+				// Remove any reference to the popped node
+				pAdjNode->SetAdjHitNode(eDirectionToPopped, nullptr);
+
+				// If the adjacent node is a candidate node, with no more links
+				// to any hit nodes, then it should be removed
+				if (pAdjNode->IsCandidateNode() && pAdjNode->GetLinkCount() == 0)
+				{
+					// Pop the adjacent candidate node and delete it
+					PopNode(pAdjNode);
+					delete pAdjNode;
+				}
+			}
+		}
+	}
 }
