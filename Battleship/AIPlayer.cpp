@@ -21,6 +21,12 @@ m_searchGraph(_rBoardOpponent)
 {
 }
 
+CAIPlayer::CAIPlayer(const CAIPlayer& _krRhs) :
+CPlayer(_krRhs),
+m_searchGraph(_krRhs.m_searchGraph)
+{
+}
+
 
 CAIPlayer::~CAIPlayer()
 {

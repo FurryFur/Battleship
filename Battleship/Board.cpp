@@ -32,6 +32,15 @@ m_kRAND_COL(0, _szWidth - 1)
 	m_vecShips.emplace_back(CShip::ETYPE::AIRCRAFT_CARRIER);
 }
 
+CBoard::CBoard(const CBoard& _krRhs) :
+m_szWidth(_krRhs.m_szWidth),
+m_szHeight(_krRhs.m_szHeight),
+m_vec2dBoardSquares(_krRhs.m_vec2dBoardSquares),
+m_kRAND_ROW(0, _krRhs.m_szHeight - 1),
+m_kRAND_COL(0, _krRhs.m_szWidth - 1)
+{
+}
+
 
 CBoard::~CBoard()
 {

@@ -13,6 +13,7 @@ class CAIPlayer : public CPlayer
 {
 public:
 	CAIPlayer(CBoard& _rBoardPlayer, CBoard& _rBoardOpponent);
+	CAIPlayer(const CAIPlayer&);
 	~CAIPlayer();
 
 	// Do one turn of the AI player

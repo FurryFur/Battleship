@@ -17,6 +17,7 @@ public:
 	};
 
 	CBoardSquare();
+	CBoardSquare(const CBoardSquare&);
 	~CBoardSquare();
 
 	const CShip* GetShip() const;

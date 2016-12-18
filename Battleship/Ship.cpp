@@ -37,6 +37,15 @@ m_bIsDestroyed(false)
 	m_vecpOccupiedSquares.reserve(m_szLength);
 }
 
+CShip::CShip(const CShip& _krRhs) :
+m_szLength(_krRhs.m_szLength),
+m_bIsDestroyed(_krRhs.m_bIsDestroyed),
+m_eOrientation(_krRhs.m_eOrientation),
+m_keTYPE(_krRhs.m_keTYPE)
+{
+	// Shallow copy occupied squares, otherwise they won't be linked to a board
+	m_vecpOccupiedSquares =_krRhs.m_vecpOccupiedSquares;
+}
 
 CShip::~CShip()
 {

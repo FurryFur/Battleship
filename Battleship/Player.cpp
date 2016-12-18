@@ -14,6 +14,14 @@ m_eWinState(CPlayer::EWIN_STATE::NO_WIN)
 {
 }
 
+// Note: Will have references to the same boards as the rhs
+CPlayer::CPlayer(const CPlayer& _krRhs) :
+m_rBoardPlayer(_krRhs.m_rBoardPlayer),
+m_rBoardOpponent(_krRhs.m_rBoardOpponent),
+m_eWinState(_krRhs.m_eWinState)
+{
+}
+
 
 CPlayer::~CPlayer()
 {

@@ -8,6 +8,15 @@ m_eState(CBoardSquare::ESTATE::NOT_FIRED_UPON)
 {
 }
 
+CBoardSquare::CBoardSquare(const CBoardSquare& _krRhs) :
+m_pShip(nullptr),
+m_eState(_krRhs.m_eState)
+{
+	if (_krRhs.m_pShip != nullptr)
+	{
+		m_pShip = new CShip(*(_krRhs.m_pShip));
+	}
+}
 
 CBoardSquare::~CBoardSquare()
 {

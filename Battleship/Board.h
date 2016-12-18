@@ -15,6 +15,7 @@ class CBoard
 public:
 	CBoard();
 	CBoard(size_t, size_t);
+	CBoard(const CBoard&);
 	~CBoard();
 
 	size_t GetWidth() const;

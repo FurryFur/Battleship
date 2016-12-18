@@ -29,6 +29,7 @@ public:
 	};
 
 	CShip(ETYPE);
+	CShip(const CShip&);
 	~CShip();
 
 	void AddOccupiedSquare(CBoardSquare * const);

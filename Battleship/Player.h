@@ -19,6 +19,7 @@ public:
 	};
 
 	CPlayer(CBoard& _rBoardPlayer, CBoard& _rBoardOpponent);
+	CPlayer(const CPlayer&);
 	~CPlayer();
 
 	// Get the current win / lost or no winner state for this player
