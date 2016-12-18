@@ -24,7 +24,7 @@ CAIPlayer::~CAIPlayer()
 {
 }
 
-void CAIPlayer::DoTurn()
+bool CAIPlayer::DoTurn()
 {
 	// Find first candidate if none are available
 	if (m_searchGraph.GetCandidateCount() == 0)
@@ -99,4 +99,16 @@ void CAIPlayer::DoTurn()
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	// Should the player get another turn?
+	if (eHitState == CBoardSquare::ESTATE::HIT || eHitState == CBoardSquare::ESTATE::DESTROYED)
+	{
+		// Yes on hit
+		return true;
+	}
+	else
+	{
+		// No on miss
+		return false;
+	}
 }

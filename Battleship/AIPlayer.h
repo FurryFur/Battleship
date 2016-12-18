@@ -5,6 +5,7 @@
 
 #include "SearchGraph.h"
 #include "Board.h"
+#include "BoardSquare.h"
 
 #include "Player.h"
 
@@ -15,7 +16,7 @@ public:
 	~CAIPlayer();
 
 	// Do one turn of the AI player
-	void DoTurn() override;
+	bool DoTurn() override;
 
 private:
 	// The Search Graph of candidate positions for ships

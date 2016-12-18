@@ -86,6 +86,7 @@
     <ClCompile Include="SearchGraph.cpp" />
     <ClCompile Include="SearchNode.cpp" />
     <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIPlayer.h" />
@@ -97,6 +98,7 @@
     <ClInclude Include="SearchGraph.h" />
     <ClInclude Include="SearchNode.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Battleship.rc" />

@@ -4,6 +4,8 @@
 #define SHIP_H
 
 #include <vector>
+#include <random>
+
 #include "BoardSquare.h"
 
 class CShip
@@ -40,12 +42,17 @@ public:
 	// Return the vector of board square pointers occupied by the ship
 	std::vector<CBoardSquare * const> GetOccupiedSquares() const;
 
+	// Return a random ship orientation
+	static CShip::EORIENTATION GetRandomOrientation();
+
 private:
 	std::vector<CBoardSquare * const> m_vecpOccupiedSquares;
 	size_t m_szLength;
 	mutable bool m_bIsDestroyed; // Cache variable
 	EORIENTATION m_eOrientation;
 	const ETYPE m_keTYPE;
+
+	static const std::uniform_int_distribution<unsigned int> s_kRAND_ORIENTATION;
 };
 
 #endif // SHIP_H

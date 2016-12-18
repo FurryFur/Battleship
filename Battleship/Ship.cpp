@@ -1,6 +1,10 @@
 #include <assert.h>
+
+#include "Util.h"
 #include "BoardSquare.h"
 #include "Ship.h"
+
+const std::uniform_int_distribution<unsigned int> CShip::s_kRAND_ORIENTATION(0, 1);
 
 CShip::CShip(const CShip::ETYPE _keType) :
 m_keTYPE(_keType),
@@ -62,6 +66,11 @@ CShip::EORIENTATION CShip::GetOrientation() const
 void CShip::SetOrientation(const CShip::EORIENTATION _keOrientation)
 {
 	m_eOrientation = _keOrientation;
+}
+
+CShip::EORIENTATION CShip::GetRandomOrientation()
+{
+	return static_cast<CShip::EORIENTATION>(s_kRAND_ORIENTATION(Util::g_RNG));
 }
 
 bool CShip::IsDestroyed() const

@@ -7,10 +7,9 @@
 #include "BoardSquare.h"
 #include "BoardPosition.hpp"
 #include "Ship.h"
+#include "Util.h"
 
 #include "Board.h"
-
-std::mt19937 CBoard::m_skRNG{ std::random_device()() };
 
 CBoard::CBoard() :
 CBoard::CBoard(10, 10)
@@ -22,8 +21,7 @@ m_szWidth(_szWidth),
 m_szHeight(_szHeight),
 m_vec2dBoardSquares(_szHeight, std::vector<CBoardSquare>(_szWidth)),
 m_kRAND_ROW(0, _szHeight - 1),
-m_kRAND_COL(0, _szWidth - 1),
-m_kRAND_ORIENTATION(0, 1)
+m_kRAND_COL(0, _szWidth - 1)
 {
 	m_vecShips.emplace_back(CShip::ETYPE::PATROL_BOAT);
 	m_vecShips.emplace_back(CShip::ETYPE::SUBMARINE);
@@ -95,8 +93,23 @@ bool CBoard::IsValidPlacement(const TBoardPosition& _krPosition, const CShip::EO
 	return true;
 }
 
+void CBoard::PlaceShipsRandom()
+{
+	for (unsigned int i = 0; i < m_vecShips.size(); ++i)
+	{
+		bool bSuccess = false;
+		while (!bSuccess)
+		{
+			bSuccess = TryPlaceShip(
+				GetRandomBoardPosition(),
+				CShip::GetRandomOrientation(),
+				m_vecShips[i]
+			);
+		}
+	}
+}
 
-bool CBoard::PlaceShip(const TBoardPosition& _krPosition, const CShip::EORIENTATION _keOrientation, CShip& _rOutShip)
+bool CBoard::TryPlaceShip(const TBoardPosition& _krPosition, const CShip::EORIENTATION _keOrientation, CShip& _rOutShip)
 {
 	if (!IsValidPlacement(_krPosition, _keOrientation, _rOutShip))
 	{
@@ -129,26 +142,17 @@ bool CBoard::PlaceShip(const TBoardPosition& _krPosition, const CShip::EORIENTAT
 	return true;
 }
 
-void CBoard::SetupBoardRandom()
+const CShip& CBoard::GetShip(const unsigned int _kuiIdx) const
 {
-	for (unsigned int i = 0; i < m_vecShips.size(); ++i)
-	{
-		bool bSuccess = false;
-		while (!bSuccess)
-		{
-			unsigned int uiR = m_kRAND_ROW(m_skRNG);
-			unsigned int uiC = m_kRAND_COL(m_skRNG);
-
-			bSuccess = PlaceShip(
-				GetRandomBoardPosition(),
-				GetRandomOrientation(), 
-				m_vecShips[i]
-			);
-		}
-	}
+	return m_vecShips[_kuiIdx];
 }
 
-void CBoard::Display(const bool _bShipsVisible) const
+size_t CBoard::GetShipCount() const
+{
+	return m_vecShips.size();
+}
+
+void CBoard::Display(const int _kiX, const int _kiY, const bool _kbShipsVisible) const
 {
 	typedef CBoardSquare::ESTATE EHIT_STATE;
 
@@ -157,6 +161,9 @@ void CBoard::Display(const bool _bShipsVisible) const
 	GetConsoleScreenBufferInfo(hConsole, &csbi);
 
 	const WORD kwGRID_DEFAULT_C = BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+
+	// Got to start position
+	Util::GotoXY(_kiX, _kiY);
 
 	// Set grid letters coloring
 	SetConsoleTextAttribute(hConsole, csbi.wAttributes);
@@ -167,10 +174,12 @@ void CBoard::Display(const bool _bShipsVisible) const
 	{
 		std::cout << c + 1 << ' ';
 	}
-	std::cout << std::endl;
 
 	for (unsigned int r = 0; r < GetHeight(); ++r)
 	{
+		// Got to the start of this grid row
+		Util::GotoXY(_kiX, _kiY + 1 + r);
+
 		// Set grid numbers coloring
 		SetConsoleTextAttribute(hConsole, csbi.wAttributes);
 
@@ -189,7 +198,7 @@ void CBoard::Display(const bool _bShipsVisible) const
 			WORD wSpacingColor = kwGRID_DEFAULT_C;
 
 			// If ships are visible
-			if (_bShipsVisible)
+			if (_kbShipsVisible)
 			{
 				// Check for ship
 				const CShip* pkShip = krBoardSquare.GetShip();
@@ -239,7 +248,7 @@ void CBoard::Display(const bool _bShipsVisible) const
 					wSpacingColor |= BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
 				}
 				// Ship color background between ships if ships are visible
-				else if (_bShipsVisible && krBoardSquare.GetShip() != nullptr && krBoardSquareLeft.GetShip() == krBoardSquare.GetShip())
+				else if (_kbShipsVisible && krBoardSquare.GetShip() != nullptr && krBoardSquareLeft.GetShip() == krBoardSquare.GetShip())
 				{
 					wSpacingColor = wColor;
 				}
@@ -268,9 +277,6 @@ void CBoard::Display(const bool _bShipsVisible) const
 			// Print grid square
 			std::cout << cChar;
 		}
-
-		// End row
-		std::cout << std::endl;
 	}
 
 	// Reset coloring
@@ -313,24 +319,9 @@ bool CBoard::CanFireAt(const TBoardPosition& _krBoardPos) const
 	}
 }
 
-const CShip& CBoard::GetShip(const unsigned int _kuiIdx) const
-{
-	return m_vecShips[_kuiIdx];
-}
-
-size_t CBoard::GetShipCount() const
-{
-	return m_vecShips.size();
-}
-
 TBoardPosition CBoard::GetRandomBoardPosition() const
 {
-	return TBoardPosition{ m_kRAND_ROW(m_skRNG), m_kRAND_COL(m_skRNG) };
-}
-
-CShip::EORIENTATION CBoard::GetRandomOrientation() const
-{
-	return static_cast<CShip::EORIENTATION>(m_kRAND_ORIENTATION(m_skRNG));
+	return TBoardPosition{ m_kRAND_ROW(Util::g_RNG), m_kRAND_COL(Util::g_RNG) };
 }
 
 const CBoardSquare& CBoard::GetBoardSquare(const TBoardPosition& _krBoardPosition) const

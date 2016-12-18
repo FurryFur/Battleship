@@ -1,7 +1,9 @@
 #include <list>
 #include <assert.h>
 #include <functional>
+#include <random>
 
+#include "Util.h"
 #include "Board.h"
 #include "SearchNode.h"
 #include "BoardPosition.hpp"
@@ -140,8 +142,13 @@ CSearchNode* CSearchGraph::PopNextCandidate()
 			}
 		}
 	
-		// If we can't find a prefered candidate node then just return the first
+		// If we can't find a prefered candidate node then return one at random
 		auto it = m_listCandidateNodes.begin();
+		auto uiRandIdx = std::uniform_int_distribution<unsigned int>(0, (m_listCandidateNodes.size() - 1))(Util::g_RNG);
+		for (unsigned int i = 0; i < uiRandIdx; ++i)
+		{
+			++it;
+		}
 		CSearchNode* pCandidateNode = *it;
 		return PopCandidateNode(it);
 	}
