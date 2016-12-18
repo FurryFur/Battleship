@@ -85,7 +85,7 @@ int main()
 				if (bPTurn)
 				{
 					Util::ClearRight();
-					std::cout << "Player " << (i + 1) << " gets another turn!" << std::endl;
+					std::cout << "Hit! Player " << (i + 1) << " gets another turn!" << std::endl;
 				}
 			}
 		}
