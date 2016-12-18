@@ -19,7 +19,7 @@ public:
 	// Do one turn of the AI player
 	bool DoTurn() override;
 
-	void DisplayGameView(const int, const int) const override;
+	void DisplayGameView(const int, const int, const bool _kbOpponentShipsVisible = false) const override;
 
 private:
 	// The Search Graph of candidate positions for ships

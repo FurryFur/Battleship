@@ -29,8 +29,9 @@ public:
 	// Returns true if the player should get another turn (has hit something).
 	virtual bool DoTurn();
 
-	// Display player and oppenent game boards at the specified (x, y) position
-	virtual void DisplayGameView(const int, const int) const;
+	// Display player and oppenent game boards at the specified (x, y) position.
+	// Optional boolean parameter controls whether the player can see oppenents ships, or not.
+	virtual void DisplayGameView(const int, const int, const bool _kbOpponentShipsVisible = false) const;
 	
 protected:
 	CBoard& m_rBoardPlayer;

@@ -32,11 +32,11 @@ CAIPlayer::~CAIPlayer()
 {
 }
 
-void CAIPlayer::DisplayGameView(const int _kiX, const int _kiY) const
+void CAIPlayer::DisplayGameView(const int _kiX, const int _kiY, const bool _kbOpponentShipsVisible) const
 {
 	Util::GotoXY(_kiX, _kiY);
 	std::cout << "               Computer's View:";
-	CPlayer::DisplayGameView(_kiX, _kiY + 1);
+	CPlayer::DisplayGameView(_kiX, _kiY + 1, _kbOpponentShipsVisible);
 }
 
 bool CAIPlayer::DoTurn()

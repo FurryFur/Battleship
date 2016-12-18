@@ -27,7 +27,7 @@ CPlayer::~CPlayer()
 {
 }
 
-void CPlayer::DisplayGameView(const int _kiX, const int _kiY) const
+void CPlayer::DisplayGameView(const int _kiX, const int _kiY, const bool _kbOpponentShipsVisible) const
 {
 	const int kiPADDING = 4;
 
@@ -41,7 +41,7 @@ void CPlayer::DisplayGameView(const int _kiX, const int _kiY) const
 	std::cout << "      Enemy Board" << std::endl;
 	
 	m_rBoardPlayer.Display(_kiX, iBoardY, true);
-	m_rBoardOpponent.Display(iOpponentBoardX, iBoardY, false);
+	m_rBoardOpponent.Display(iOpponentBoardX, iBoardY, _kbOpponentShipsVisible);
 }
 
 CPlayer::EWIN_STATE CPlayer::GetWinState() const

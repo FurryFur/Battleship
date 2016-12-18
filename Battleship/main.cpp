@@ -43,20 +43,23 @@ int main()
 		strInput = Util::GetValidatedInput("manual|man|m|random|rand|r");
 		if (std::regex_match(strInput, std::regex("manual|man|m", std::regex_constants::icase)))
 		{
+			// Setup board manually
 			player1Board.PlaceShipsManual();
 		}
 		else
 		{
+			// Setup board with random ship placement
 			player1Board.PlaceShipsRandom();
 		}
-
 		// Computer always places ships randomly
 		player2Board.PlaceShipsRandom();
 
-		CPlayer   player1(player1Board, player2Board);
+		// Setup players
+		CAIPlayer   player1(player1Board, player2Board);
 		CAIPlayer player2(player2Board, player1Board);
 		std::array< CPlayer*, 2 > arrpPlayers = { &player1, &player2 };
 
+		// Display initial game state
 		system("cls");
 		player1.DisplayGameView(kiP1_VIEW_X, kiP1_VIEW_Y);
 		if (bDebugView)
@@ -97,12 +100,13 @@ int main()
 
 		// Display the final board state with ships visible for both players
 		system("cls");
-		player1.DisplayGameView(kiP1_VIEW_X, kiP1_VIEW_Y);
+		player1.DisplayGameView(kiP1_VIEW_X, kiP1_VIEW_Y, true);
 		if (bDebugView)
 		{
-			player2.DisplayGameView(kiP2_VIEW_X, kiP2_VIEW_Y);
+			player2.DisplayGameView(kiP2_VIEW_X, kiP2_VIEW_Y, true);
 		}
 
+		// Display win/loss message
 		if (player1.GetWinState() == CPlayer::EWIN_STATE::WON)
 		{
 			Util::ClearRight();

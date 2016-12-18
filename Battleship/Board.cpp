@@ -260,7 +260,7 @@ void CBoard::Display(const int _kiX, const int _kiY, const bool _kbShipsVisible)
 		{
 			const CBoardSquare& krBoardSquare = GetBoardSquare({ r, c });
 
-			auto cChar = static_cast<unsigned char>(247);
+			char cChar = '.';
 			WORD wColor = kwGRID_DEFAULT_C;
 			WORD wSpacingColor = kwGRID_DEFAULT_C;
 
