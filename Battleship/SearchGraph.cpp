@@ -21,11 +21,10 @@ m_szLUTHeight(_krBoard.GetHeight())
 
 CSearchGraph::~CSearchGraph()
 {
-	// For each candidate node
-	for (auto it = m_listCandidateNodes.begin(); it != m_listCandidateNodes.end(); ++it)
+	// Prune graph starting at candidate nodes until there are none left
+	while (m_listCandidateNodes.begin() != m_listCandidateNodes.end())
 	{
-		// PruneGraph with candidate node as start node
-		PruneGraph(*it, nullptr);
+		PruneGraph(*m_listCandidateNodes.begin(), nullptr);
 	}
 }
 
