@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string>
 
 #include "Util.h"
 #include "BoardSquare.h"
@@ -56,6 +57,24 @@ size_t CShip::GetLength() const
 CShip::ETYPE CShip::GetType() const
 {
 	return m_keTYPE;
+}
+
+std::string CShip::GetName() const
+{
+	switch (m_keTYPE)
+	{
+	case ETYPE::AIRCRAFT_CARRIER:
+		return "Aircraft Carrier";
+	case ETYPE::BATTLESHIP:
+		return "Battleship";
+	case ETYPE::DESTROYER:
+		return "Destroyer";
+	case ETYPE::PATROL_BOAT:
+		return "Patrol Boat";
+	case ETYPE::SUBMARINE:
+	default:
+		return "Submarine";
+	}
 }
 
 CShip::EORIENTATION CShip::GetOrientation() const

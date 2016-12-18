@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <random>
+#include <string>
 
 #include "BoardSquare.h"
 
@@ -41,6 +42,9 @@ public:
 
 	// Return the vector of board square pointers occupied by the ship
 	std::vector<CBoardSquare * const> GetOccupiedSquares() const;
+
+	// Return the name for this type of ship
+	std::string GetName() const;
 
 	// Return a random ship orientation
 	static CShip::EORIENTATION GetRandomOrientation();

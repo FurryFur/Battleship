@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <vector>
 #include <array>
+#include <string>
+#include <regex>
 
 #include "BoardSquare.h"
 #include "BoardPosition.hpp"
@@ -109,6 +111,62 @@ void CBoard::PlaceShipsRandom()
 	}
 }
 
+void CBoard::PlaceShipsManual()
+{
+	for (CShip& rShip : m_vecShips)
+	{
+		bool bIsValidPlacement = false;
+		bool bInvalidPlacementMsg = false;
+		while (!bIsValidPlacement)
+		{
+			system("cls");
+			Display(2, 1, true);
+
+			if (bInvalidPlacementMsg)
+			{
+				std::cout << "Invalid ship placement" << std::endl;
+			}
+
+			// Prompt the player for ship coordinates
+			std::cout << "Where do you want to place the " << rShip.GetName() << " (length " << rShip.GetLength() << "): ";
+
+			// Get validated input
+			std::string strInput = Util::GetValidatedInput(Util::g_kstrREGEX_COORDS);
+
+			// Convert input to board position
+			TBoardPosition boardPos = Util::CovertInputToBoardPos(strInput);
+
+			// Prompt the player for ship orientation
+			std::cout << "What orientation to you want to place the " << rShip.GetName() << " in (vert/hori): ";
+
+			// Get validated input
+			strInput = Util::GetValidatedInput("vertical|vert|v|horizontal|horiz|hori|hor|h");
+
+			// Convert input to ship orientation
+			CShip::EORIENTATION eOrientation;
+			if (std::regex_match(strInput, std::regex("vertical|vert|v", std::regex_constants::icase)))
+			{
+				eOrientation = CShip::EORIENTATION::VERTICAL;
+			}
+			else
+			{
+				eOrientation = CShip::EORIENTATION::HORIZONTAL;
+			}
+
+			// Try placing the ship, inform the user if the placement was invalid
+			bIsValidPlacement = TryPlaceShip(boardPos, eOrientation, rShip);
+			if (!bIsValidPlacement)
+			{
+				bInvalidPlacementMsg = true;
+			}
+			else
+			{
+				bInvalidPlacementMsg = false;
+			}
+		}
+	}
+}
+
 bool CBoard::TryPlaceShip(const TBoardPosition& _krPosition, const CShip::EORIENTATION _keOrientation, CShip& _rOutShip)
 {
 	if (!IsValidPlacement(_krPosition, _keOrientation, _rOutShip))
@@ -169,7 +227,7 @@ void CBoard::Display(const int _kiX, const int _kiY, const bool _kbShipsVisible)
 	SetConsoleTextAttribute(hConsole, csbi.wAttributes);
 
 	// Print grid numbers
-	std::cout << "   ";
+	std::cout << "  ";
 	for (unsigned int c = 0; c < GetWidth(); ++c)
 	{
 		std::cout << c + 1 << ' ';
@@ -184,7 +242,7 @@ void CBoard::Display(const int _kiX, const int _kiY, const bool _kbShipsVisible)
 		SetConsoleTextAttribute(hConsole, csbi.wAttributes);
 
 		// Print grid letters
-		std::cout << ' ' << static_cast<char>('A' + r) << ' ';
+		std::cout << static_cast<char>('A' + r) << ' ';
 
 		// Set grid default coloring
 		SetConsoleTextAttribute(hConsole, kwGRID_DEFAULT_C);

@@ -19,6 +19,23 @@ CPlayer::~CPlayer()
 {
 }
 
+void CPlayer::DisplayGameView(const int _kiX, const int _kiY) const
+{
+	const int kiPADDING = 4;
+
+	int iBoardY = _kiY + 1;
+	int iOpponentBoardX = _kiX + m_rBoardPlayer.GetWidth() * 2 + kiPADDING;
+
+	Util::GotoXY(_kiX, _kiY);
+	std::cout << "      Player Board" << std::endl;
+
+	Util::GotoXY(iOpponentBoardX, _kiY);
+	std::cout << "      Enemy Board" << std::endl;
+	
+	m_rBoardPlayer.Display(_kiX, iBoardY, true);
+	m_rBoardOpponent.Display(iOpponentBoardX, iBoardY, false);
+}
+
 CPlayer::EWIN_STATE CPlayer::GetWinState() const
 {
 	// Short circuit if we have already found a winner on an ealier run
@@ -81,10 +98,10 @@ bool CPlayer::DoTurn()
 		Util::StoreCurCursorPos(iX, iY);
 
 		// Get validated input
-		std::string input = Util::GetValidatedInput(Util::g_kstrREGEX_COORDS);
+		std::string strInput = Util::GetValidatedInput(Util::g_kstrREGEX_COORDS);
 
 		// Convert input to board position
-		TBoardPosition boardPos = Util::CovertInputToBoardPos(input);
+		TBoardPosition boardPos = Util::CovertInputToBoardPos(strInput);
 
 		// Check if we can fire at this position
 		bCanFireAtCoords = m_rBoardOpponent.CanFireAt(boardPos);
@@ -106,6 +123,7 @@ bool CPlayer::DoTurn()
 		}
 		else
 		{
+			Util::ClearRight(); // Prevent overlapping messages
 			std::cout << "Can't fire there!";
 
 			// Reset cursor position

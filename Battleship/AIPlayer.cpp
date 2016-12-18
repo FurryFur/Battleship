@@ -2,6 +2,7 @@
 #include <thread>
 #include <array>
 #include <assert.h>
+#include <iostream>
 
 #include "BoardPosition.hpp"
 #include "BoardSquare.h"
@@ -9,6 +10,7 @@
 #include "Player.h"
 #include "SearchNode.h"
 #include "SearchGraph.h"
+#include "Util.h"
 
 #include "AIPlayer.h"
 
@@ -22,6 +24,13 @@ m_searchGraph(_rBoardOpponent)
 
 CAIPlayer::~CAIPlayer()
 {
+}
+
+void CAIPlayer::DisplayGameView(const int _kiX, const int _kiY) const
+{
+	Util::GotoXY(_kiX, _kiY);
+	std::cout << "               Computer's View:";
+	CPlayer::DisplayGameView(_kiX, _kiY + 1);
 }
 
 bool CAIPlayer::DoTurn()

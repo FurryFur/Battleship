@@ -46,6 +46,9 @@ public:
 	// Place all ships randomly on the board
 	void PlaceShipsRandom();
 
+	// Place all ships using user input from the player
+	void PlaceShipsManual();
+
 	// Returns a list of the ships on the board
 	const CShip& GetShip(const unsigned int) const;
 
@@ -58,7 +61,7 @@ private:
 	// Check that a board position is inside the board
 	bool IsValidPosition(const TBoardPosition&) const;
 	// Check ship placement is valid
-	bool IsValidPlacement(const TBoardPosition&, const CShip::EORIENTATION, const CShip& _krShip) const;
+	bool IsValidPlacement(const TBoardPosition&, const CShip::EORIENTATION, const CShip&) const;
 
 	// Return a modifiable reference to the board square at the specified position
 	CBoardSquare& _GetBoardSquare(const TBoardPosition&);

@@ -1,0 +1,88 @@
+--------Done----------
+Display player and opponent boards on same screen
+	(Allow specifying a position to draw the board in the console)
+	DiplayBoard(posx, posy, ships_visible?)
+----------------------
+
+--------Done----------
+Allow player to have the option of playing in debug mode (shows player and oppenent view simultaniously)
+	LOOP until got_valid_input:
+		input = GetLine("Do you want to play in debug mode (y/n):")
+		got_valid_input = ValidateInput(DEBUG_MODE_SELECT, input)
+		if got_valid_input:
+			if yes:
+				debug = on
+			if no:
+				debug = off
+	Eg:
+		Do you want to play in debug mode (y/n): y
+		Display player 1 view
+		Display player 2 view
+----------------------
+
+--------Done----------
+Allow players the option to select where to place their ships:
+	LOOP until valid_input:
+		input = GetLine("Do you want to place ships manually or have them placed randomly (manual/rand):")
+		valid_input = ValidateInput(PLACEMENT_STYLE_SELECT, input)
+		if not valid_input:
+			continue
+		else:
+			placement_style = ConvertInputToPlacementStyle(input)
+
+	if placement_style == MANUAL:
+		SetupBoardManully
+		
+	Eg:
+		Do you want to place ships manually or have them placed randomly (manual/rand): m
+		Where do you want to place the patrol boat (length 2): A3
+		What orientation to you want to place the patrol boat in (vert/hori): v
+		^ (repeat above two lines for each boat)
+
+SetupBoardManually:
+	FOR EACH ship:
+		LOOP until placement_is_valid:
+			DisplayBoard(x, y, ships_visible=true)
+
+			input = GetLine("Where do you want to place the {ship_name} (length {ship_length})")
+			if not ValidateInput(BOARD_COORDINATES_SELECT, input):
+				Print("Invalid input")
+				continue
+			board_pos = ConvertInputToBoardPos(input)
+
+			input = GetLine("What orientation to you want to place the {ship_name} in (vert/hori)")
+			if not ValidateInput(ORIENTATION_SELECT, input):
+				Print("Invalid input")
+				continue
+			orientation = ConvertInputToOrientation(input)
+
+			placement_is_valid = IsPlacementValid(board_pos, orientation, ship)
+			if placement_is_valid:
+				PlaceShip(board_pos, orientation, ship)
+			else:
+				Print("Invalid ship placement")
+----------------------
+
+-----------Done----------	
+Allow human player to select board positions to fire at on their turn:
+	LOOP until can_fire_at_coords:
+		input = GetLine("Where do you want to fire:")
+		if not ValidateInput(BOARD_COORDINATES_SELECT, input):
+			Print("Invalid input")
+			continue
+		else:
+			board_pos = ConvertInputToBoardPos(input)
+			can_fire_at_coords = CanFireAt(board_pos)
+			if can_fire_at_coords:
+				FireAt(board_pos)
+			else:
+				Print("can't fire there")
+			
+	Eg:
+		Where do you want to fire: A5
+-------------------------
+
+-----------Done----------	
+If a player scores a hit on their turn then they get another
+	while DoTurn() == HIT: {}
+-------------------------
