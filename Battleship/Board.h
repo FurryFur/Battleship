@@ -38,7 +38,7 @@ public:
 
 	// Fills the supplied array with board positions, NORTH, SOUTH, EAST, and 
 	// WEST, of the specified position
-	static std::array<TBoardPosition, 4>& FillWithCardinalPositions(const TBoardPosition&, std::array<TBoardPosition, 4>&);
+	static void FillWithCardinalPositions(const TBoardPosition&, TBoardPosition (&_rarrCardPos)[4]);
 
 	// Display the board at the specified (x, y) position.
 	// Boolean parameter controls whether ships are displayed.

@@ -71,14 +71,13 @@ size_t CBoard::GetHeight() const
 	return m_szHeight;
 }
 
-std::array<TBoardPosition, 4>& CBoard::FillWithCardinalPositions(const TBoardPosition& _kBoardPos, std::array<TBoardPosition, 4>& _rarrCardPos)
+void CBoard::FillWithCardinalPositions(const TBoardPosition& _kBoardPos, TBoardPosition (&_rarrCardPos)[4])
 {
 	// TF: Arithmetic Operator
 	_rarrCardPos[0].m_uiRow = _kBoardPos.m_uiRow - 1; _rarrCardPos[0].m_uiCol = _kBoardPos.m_uiCol;
 	_rarrCardPos[1].m_uiRow = _kBoardPos.m_uiRow;     _rarrCardPos[1].m_uiCol = _kBoardPos.m_uiCol + 1;
 	_rarrCardPos[2].m_uiRow = _kBoardPos.m_uiRow + 1; _rarrCardPos[2].m_uiCol = _kBoardPos.m_uiCol;
 	_rarrCardPos[3].m_uiRow = _kBoardPos.m_uiRow;     _rarrCardPos[3].m_uiCol = _kBoardPos.m_uiCol - 1;
-	return _rarrCardPos;
 }
 
 bool CBoard::IsValidPosition(const TBoardPosition& _krPosition) const

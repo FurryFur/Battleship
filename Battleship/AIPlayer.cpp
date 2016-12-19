@@ -87,11 +87,11 @@ bool CAIPlayer::DoTurn()
 		m_searchGraph.AddHitNode(pFiredOnNode);
 
 		// Get cardinal positions
-		std::array<TBoardPosition, 4> arrCardPos;
+		TBoardPosition arrCardPos[4];
 		CBoard::FillWithCardinalPositions(firedOnPos, arrCardPos);
 
 		// Loop over each cardinal position
-		for (unsigned int i = 0; i < arrCardPos.size(); ++i)
+		for (unsigned int i = 0; i < 4; ++i)
 		{
 			// If we can fire at the position
 			if (m_rBoardOpponent.CanFireAt(arrCardPos[i]))

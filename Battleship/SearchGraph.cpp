@@ -247,12 +247,12 @@ void CSearchGraph::PopNode(CSearchNode* const _kpPoppedNode)
 
 		// Get cardinal positions
 		// TF: Array
-		std::array<TBoardPosition, 4> arrCardPos;
+		TBoardPosition arrCardPos[4];
 		CBoard::FillWithCardinalPositions(_kpPoppedNode->GetBoardPosition(), arrCardPos);
 
 		//** Remove References to popped node **//
 		// For adjacent cardinal positions
-		for (unsigned int i = 0; i < arrCardPos.size(); ++i)
+		for (unsigned int i = 0; i < 4; ++i)
 		{
 			// Check cardinal position is valid
 			if (!IsValidLUPosition(arrCardPos[i]))
