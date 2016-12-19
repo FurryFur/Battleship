@@ -12,6 +12,8 @@ typedef CBoardSquare::ESTATE ETURN_RES;
 
 int main()
 {
+	// TF: Variable Type
+	// TF: Constant
 	const int kiP1_VIEW_X = 2;
 	const int kiP1_VIEW_Y = 0;
 	const int kiP2_VIEW_X = 2;
@@ -35,6 +37,7 @@ int main()
 			bDebugView = false;
 		}
 
+		// TF: Class Instance
 		CBoard player1Board;
 		CBoard player2Board;
 
@@ -55,7 +58,7 @@ int main()
 		player2Board.PlaceShipsRandom();
 
 		// Setup players
-		CAIPlayer   player1(player1Board, player2Board);
+		CPlayer   player1(player1Board, player2Board);
 		CAIPlayer player2(player2Board, player1Board);
 		std::array< CPlayer*, 2 > arrpPlayers = { &player1, &player2 };
 
@@ -66,6 +69,9 @@ int main()
 		{
 			player2.DisplayGameView(kiP2_VIEW_X, kiP2_VIEW_Y);
 		}
+
+		// Show whoes turn it is now
+		std::cout << "Player 1's turn" << std::endl;
 
 		// Loop until a player wins
 		while (player1.GetWinState() == CPlayer::EWIN_STATE::NO_WIN)
@@ -91,8 +97,13 @@ int main()
 					// Let player know if they have another turn
 					if (bPTurn)
 					{
-						Util::ClearRight();
-						std::cout << "Hit! Player " << (i + 1) << " gets another turn!" << std::endl;
+						std::cout << "Player " << (i + 1) << " scored a hit!" << std::endl;
+						std::cout << "Player " << (i + 1) << " gets another turn!" << std::endl;
+					}
+					else
+					{
+						std::cout << "Player " << (i + 1) << " missed" << std::endl;
+						std::cout << "Player " << (((i + 1) % 2) + 1) << "'s turn" << std::endl;
 					}
 				}
 			}

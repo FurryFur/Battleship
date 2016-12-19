@@ -21,6 +21,7 @@ public:
 
 	void DisplayGameView(const int, const int, const bool _kbOpponentShipsVisible = false) const override;
 
+// TF: Access Specifier
 private:
 	// The Search Graph of candidate positions for ships
 	CSearchGraph m_searchGraph;

@@ -18,7 +18,7 @@ m_szLUTHeight(_krBoard.GetHeight())
 {
 }
 
-
+// TF: Destructor
 CSearchGraph::~CSearchGraph()
 {
 	// Prune graph starting at candidate nodes until there are none left
@@ -62,6 +62,8 @@ void CSearchGraph::AddCandidate(const TBoardPosition& _krCandidatePos, CSearchNo
 	else
 	{
 		// Create a new candidate node at the specified position
+		// TF: Pointer Initialised
+		// TF: Dynamic Memory
 		pCandidateNode = new CSearchNode(_krCandidatePos);
 
 		// Add canditate node to list and lookup table
@@ -87,6 +89,8 @@ void CSearchGraph::AddCandidate(const TBoardPosition& _krCandidatePos, CSearchNo
 void CSearchGraph::AddHitNode(CSearchNode* const _kpHitNode)
 {
 	// Set this node as a hit node
+	// TF: Pointer Dereferenced
+	// Equivalent: (*_kpHitNode).SetHitNode()
 	_kpHitNode->SetHitNode();
 
 	// Add the node back to the lookup table
@@ -117,9 +121,11 @@ size_t CSearchGraph::GetCandidateCount() const
 CSearchNode* CSearchGraph::PopNextCandidate()
 {
 	// Check we have candidate nodes
+	// TF: Conditional Statement
 	if (GetCandidateCount() > 0)
 	{
 		// Loop over all the candidate nodes
+		// TF: Iteration Structure
 		for (auto it = m_listCandidateNodes.begin(); it != m_listCandidateNodes.end(); ++it)
 		{
 			CSearchNode* pCandidateNode = *it;
@@ -226,6 +232,7 @@ void CSearchGraph::PopNode(CSearchNode* const _kpPoppedNode)
 		--m_szNodeCount;
 
 		// Get cardinal positions
+		// TF: Array
 		std::array<TBoardPosition, 4> arrCardPos;
 		CBoard::FillWithCardinalPositions(_kpPoppedNode->GetBoardPosition(), arrCardPos);
 

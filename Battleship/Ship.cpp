@@ -7,6 +7,7 @@
 
 const std::uniform_int_distribution<unsigned int> CShip::s_kRAND_ORIENTATION(0, 1);
 
+// TF: Constructor
 CShip::CShip(const CShip::ETYPE _keType) :
 m_keTYPE(_keType),
 m_eOrientation(CShip::EORIENTATION::NOT_PLACED),

@@ -31,13 +31,18 @@ public:
 
 	// Display player and oppenent game boards at the specified (x, y) position.
 	// Optional boolean parameter controls whether the player can see oppenents ships, or not.
+	// TF: Default Parameter
 	virtual void DisplayGameView(const int, const int, const bool _kbOpponentShipsVisible = false) const;
-	
+
 protected:
 	CBoard& m_rBoardPlayer;
 	CBoard& m_rBoardOpponent;
 
 	mutable EWIN_STATE m_eWinState; // Cache variable
+
+	// Returns true when the player should get another turn based the supplied
+	// attack result and the current win state
+	bool HasAnotherTurn(const CBoardSquare::ESTATE _keAttackResult);
 };
 
 #endif // PLAYER_H

@@ -32,6 +32,7 @@ m_kRAND_COL(0, _szWidth - 1)
 	m_vecShips.emplace_back(CShip::ETYPE::AIRCRAFT_CARRIER);
 }
 
+// TF: Copy Constructor
 CBoard::CBoard(const CBoard& _krRhs) :
 m_szWidth(_krRhs.m_szWidth),
 m_szHeight(_krRhs.m_szHeight),
@@ -58,6 +59,7 @@ size_t CBoard::GetHeight() const
 
 std::array<TBoardPosition, 4>& CBoard::FillWithCardinalPositions(const TBoardPosition& _kBoardPos, std::array<TBoardPosition, 4>& _rarrCardPos)
 {
+	// TF: Arithmetic Operator
 	_rarrCardPos[0].m_uiRow = _kBoardPos.m_uiRow - 1; _rarrCardPos[0].m_uiCol = _kBoardPos.m_uiCol;
 	_rarrCardPos[1].m_uiRow = _kBoardPos.m_uiRow;     _rarrCardPos[1].m_uiCol = _kBoardPos.m_uiCol + 1;
 	_rarrCardPos[2].m_uiRow = _kBoardPos.m_uiRow + 1; _rarrCardPos[2].m_uiCol = _kBoardPos.m_uiCol;
@@ -81,6 +83,7 @@ bool CBoard::IsValidPlacement(const TBoardPosition& _krPosition, const CShip::EO
 	unsigned int r = _krPosition.m_uiRow;
 	unsigned int c = _krPosition.m_uiCol;
 	// Iterate through the board positions that the ship will occupy
+	// TF: Relational Operator
 	for (unsigned int i = 0; i < _krOutShip.GetLength(); ++i)
 	{
 		// Fail if one of the positions is not valid or if it's already occupied
@@ -355,6 +358,7 @@ void CBoard::Display(const int _kiX, const int _kiY, const bool _kbShipsVisible)
 
 CBoardSquare::ESTATE CBoard::FireAt(const TBoardPosition& _krBoardPos)
 {
+	// TF: Reference
 	CBoardSquare& rBoardSquare = _GetBoardSquare(_krBoardPos);
 	rBoardSquare.FireUpon();
 
@@ -388,6 +392,7 @@ bool CBoard::CanFireAt(const TBoardPosition& _krBoardPos) const
 
 TBoardPosition CBoard::GetRandomBoardPosition() const
 {
+	// TF: Pseudo Random Number
 	return TBoardPosition{ m_kRAND_ROW(Util::g_RNG), m_kRAND_COL(Util::g_RNG) };
 }
 

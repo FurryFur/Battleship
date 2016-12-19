@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <assert.h>
 
 #include "Util.h"
 #include "Board.h"
@@ -93,6 +94,20 @@ CPlayer::EWIN_STATE CPlayer::GetWinState() const
 	return m_eWinState;
 }
 
+bool CPlayer::HasAnotherTurn(const CBoardSquare::ESTATE _keAttackResult)
+{
+	// TF: Logical Operator
+	if (GetWinState() == CPlayer::EWIN_STATE::NO_WIN
+	&& (_keAttackResult == CBoardSquare::ESTATE::HIT || _keAttackResult == CBoardSquare::ESTATE::DESTROYED))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool CPlayer::DoTurn()
 {
 	// Display prompt to the user
@@ -119,15 +134,7 @@ bool CPlayer::DoTurn()
 			CBoardSquare::ESTATE eResult = m_rBoardOpponent.FireAt(boardPos);
 
 			// Check if the player gets another turn
-			if (GetWinState() == CPlayer::EWIN_STATE::NO_WIN
-			&& (eResult == CBoardSquare::ESTATE::HIT || eResult == CBoardSquare::ESTATE::DESTROYED))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return HasAnotherTurn(eResult);
 		}
 		else
 		{
@@ -141,6 +148,9 @@ bool CPlayer::DoTurn()
 			Util::ClearRight();
 		}
 	}
+
+	// Should never reach here
+	assert(0);
 
 	return false;
 }

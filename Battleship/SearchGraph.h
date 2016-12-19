@@ -12,6 +12,7 @@
 
 class CSearchNode;
 
+// TF: Class
 class CSearchGraph
 {
 public:
@@ -43,7 +44,11 @@ public:
 	// If the condition function is specified, then only nodes passing the condition will be pruned
 	void CSearchGraph::PruneGraph(CSearchNode* const, const std::function <bool(CSearchNode const * const)>& fnCondition);
 
+	// Returns the number of candidate nodes in the search graph
 	size_t GetCandidateCount() const;
+
+	// Returns the total number nodes in the search graph.
+	// Includes both hit and candidate nodes
 	size_t GetNodeCount() const;
 
 private:

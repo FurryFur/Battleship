@@ -12,7 +12,6 @@ m_szLinkCount(0)
 {
 }
 
-
 CSearchNode::~CSearchNode()
 {
 }

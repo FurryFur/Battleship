@@ -90,5 +90,8 @@
     <Text Include="planning2.txt">
       <Filter>Document Files</Filter>
     </Text>
+    <Text Include="ReadMe.txt">
+      <Filter>Document Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

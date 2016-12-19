@@ -113,17 +113,8 @@ bool CAIPlayer::DoTurn()
 		delete pFiredOnNode;
 	}
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::seconds(2));
 
-	// Should the player get another turn?
-	if (eHitState == CBoardSquare::ESTATE::HIT || eHitState == CBoardSquare::ESTATE::DESTROYED)
-	{
-		// Yes on hit
-		return true;
-	}
-	else
-	{
-		// No on miss
-		return false;
-	}
+	// Should the ai player get another turn?
+	return HasAnotherTurn(eHitState);
 }
