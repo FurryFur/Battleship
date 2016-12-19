@@ -1,3 +1,17 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name   : Board.cpp
+// Description : Implementation file for CBoard class
+// Author      : Lance Chaney
+// Mail        : lance.cha7337@mediadesign.school.nz
+//
+
 #include <iostream>
 #include <random>
 #include <Windows.h>

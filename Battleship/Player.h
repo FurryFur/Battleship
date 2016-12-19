@@ -1,3 +1,17 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name   : Player.h
+// Description : Header file for CPlayer class
+// Author      : Lance Chaney
+// Mail        : lance.cha7337@mediadesign.school.nz
+//
+
 #pragma once
 
 #ifndef PLAYER_H
@@ -8,6 +22,7 @@
 #include "Board.h"
 #include "Ship.h"
 
+// Represents a player in the game
 class CPlayer
 {
 public:
@@ -30,7 +45,7 @@ public:
 	virtual bool DoTurn();
 
 	// Display player and oppenent game boards at the specified (x, y) position.
-	// Optional boolean parameter controls whether the player can see oppenents ships, or not.
+	// Optional boolean parameter controls whether the player can see oppenents ships.
 	// TF: Default Parameter
 	virtual void DisplayGameView(const int, const int, const bool _kbOpponentShipsVisible = false) const;
 

@@ -1,3 +1,17 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name   : SearchGraph.h
+// Description : Header file for CSearchGraph class
+// Author      : Lance Chaney
+// Mail        : lance.cha7337@mediadesign.school.nz
+//
+
 #pragma once
 
 #ifndef SEARCH_GRAPH_H
@@ -13,6 +27,8 @@
 class CSearchNode;
 
 // TF: Class
+
+// Data structure used by the AI to find likely ship positions.
 class CSearchGraph
 {
 public:
@@ -25,6 +41,7 @@ public:
 		NO_DIRECTION
 	};
 
+	// Returns the reverse direction to the one specified
 	static EDIRECTION GetReverseDirection(const EDIRECTION);
 
 	CSearchGraph::CSearchGraph(const CBoard&);
@@ -36,11 +53,11 @@ public:
 	// Add a hit node to the underlying adjacency graph
 	void AddHitNode(CSearchNode* const);
 
-	// Remove and return the next most likely candidate node
-	// Don't forget to delete the pointer this returns when we are done with it
+	// Remove and return the next most likely candidate node.
+	// Don't forget to delete the pointer this returns you are done with it.
 	CSearchNode* PopNextCandidate();
 
-	// Walk the graph in all direction from the specified root node pruneing all nodes along the way.
+	// Walk the graph in all direction from the specified root node, pruneing all nodes along the way.
 	// If the condition function is specified, then only nodes passing the condition will be pruned
 	void CSearchGraph::PruneGraph(CSearchNode* const, const std::function <bool(CSearchNode const * const)>& fnCondition);
 

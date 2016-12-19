@@ -1,3 +1,17 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name   : Util.cpp
+// Description : Implementation file for global utility functions and variables
+// Author      : Lance Chaney
+// Mail        : lance.cha7337@mediadesign.school.nz
+//
+
 #include <Windows.h>
 #include <regex>
 #include <iostream>

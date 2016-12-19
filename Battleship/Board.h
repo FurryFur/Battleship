@@ -1,3 +1,17 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name   : Board.h
+// Description : Header file for CBoard class
+// Author      : Lance Chaney
+// Mail        : lance.cha7337@mediadesign.school.nz
+//
+
 #pragma once
 
 #ifndef BOARD_H
@@ -10,6 +24,7 @@
 #include "Ship.h"
 #include "BoardPosition.hpp"
 
+// Represents a game board
 class CBoard
 {
 public:
@@ -25,7 +40,8 @@ public:
 	// WEST, of the specified position
 	static std::array<TBoardPosition, 4>& FillWithCardinalPositions(const TBoardPosition&, std::array<TBoardPosition, 4>&);
 
-	// Display the board and pos (x, y), with ships visible or invisible
+	// Display the board at the specified (x, y) position.
+	// Boolean parameter controls whether ships are displayed.
 	void Display(const int _kiX, const int _kiY, const bool _kbShipsVisible) const;
 
 	// Fire at a position on the board
@@ -37,7 +53,7 @@ public:
 	// Return a random board position on this board
 	TBoardPosition GetRandomBoardPosition() const;
 
-	// Return a pointer to the board square (const) at the specified position
+	// Return a const reference to the board square at the specified position
 	const CBoardSquare& GetBoardSquare(const TBoardPosition&) const;
 
 	// Try placing a ship at the specified position and orientation on the board.
@@ -50,10 +66,10 @@ public:
 	// Place all ships using user input from the player
 	void PlaceShipsManual();
 
-	// Returns a list of the ships on the board
+	// Returns a reference to a ship in the underlying list of ships
 	const CShip& GetShip(const unsigned int) const;
 
-	// Returns the number of available ships (may or may not be placed)
+	// Returns the number of ships (may or may not be placed)
 	size_t GetShipCount() const;
 
 private:

@@ -1,3 +1,18 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name   : main.cpp
+// Description : Contains the main entry point for the program.
+//               Contains main game loop and option selection code.
+// Author      : Lance Chaney
+// Mail        : lance.cha7337@mediadesign.school.nz
+//
+
 #include <iostream>
 #include <string>
 #include <regex>
@@ -7,8 +22,6 @@
 #include "BoardSquare.h"
 #include "Player.h"
 #include "AIPlayer.h"
-
-typedef CBoardSquare::ESTATE ETURN_RES;
 
 int main()
 {
