@@ -149,7 +149,7 @@ void CBoard::PlaceShipsManual()
 			TBoardPosition boardPos = Util::CovertInputToBoardPos(strInput);
 
 			// Prompt the player for ship orientation
-			std::cout << "What orientation to you want to place the " << rShip.GetName() << " in (vert/hori): ";
+			std::cout << "What orientation do you want to place the " << rShip.GetName() << " in (vert/hori): ";
 
 			// Get validated input
 			strInput = Util::GetValidatedInput("vertical|vert|v|horizontal|horiz|hori|hor|h");
